@@ -7,26 +7,26 @@ export default class Deck {
 
   constructor(gameType: string) {
     this.gameType = gameType
-    this.reset(this.gameType)
+    this.reset()
     this.shuffle()
   }
 
-  reset(gameType: string): void {
-    const deck: Card[] = []
-
-    const suits: string[] = CardConfig.suits
-    const ranks: string[] = CardConfig.ranks
-
-    for (const suit of suits) {
-      for (const rank of ranks) {
-        deck.push(new Card(suit, rank))
-        if (gameType === 'blackjack') {
-          deck.push(new Card(suit, rank))
-        }
+  /*
+  reset(): void
+  山札を補充する
+  */
+  reset(): void {
+    for (const suit of CardConfig.suits) {
+      for (const rank of CardConfig.ranks) {
+        this.cards.push(new Card(suit, rank))
       }
     }
   }
 
+  /*
+  shuffle(): void
+  山札をシャッフルする
+  */
   shuffle(): void {
     for (let i = this.cards.length - 1; i > 0; i--) {
       let j = Math.floor(Math.random() * i + 1)
@@ -36,7 +36,15 @@ export default class Deck {
     }
   }
 
+  /*
+  drawCard(): Card
+  山札からカードを１枚引く
+  */
   drawCard(): Card {
-    return this.cards.shift()!
+    if (this.cards.length === 0) {
+      this.reset()
+      this.shuffle()
+    }
+    return this.cards.pop()!
   }
 }

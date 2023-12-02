@@ -17,7 +17,6 @@ export default abstract class Table {
   }
 
   abstract assignPlayerHands(): void
-  abstract clearPlayerHandsAndBets(): void
   abstract evaluateMove(player: Player): void
   abstract evaluateAndGetRoundResults(): string
   abstract getTurnPlayer(): Player
