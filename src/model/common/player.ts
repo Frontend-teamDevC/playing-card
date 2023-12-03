@@ -28,9 +28,17 @@ export default abstract class Player {
     this.chips = chips
   }
 
+  /*
+  promptPlayer(userData?: number | BlackjackActionType): GameDecision
+  プレイヤーのゲーム内での行動を返す
+  */
   abstract promptPlayer(
     userData?: number | BlackjackActionType | PokerActionType
   ): GameDecision
 
+  /*
+  getHandScore(): number
+  手札の合計スコアを計算して返す
+  */
   abstract getHandScore(): number
 }

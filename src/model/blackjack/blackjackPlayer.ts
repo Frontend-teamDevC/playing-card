@@ -18,29 +18,47 @@ export default class BlackjackPlayer extends Player {
     this.gameStatus = this.type === 'dealer' ? 'waiting' : 'betting'
   }
 
+  /*
+  promptPlayer(userData?: number | BlackjackActionType): GameDecision
+  プレイヤーのゲーム内での行動を返す
+  */
   promptPlayer(userData?: number | BlackjackActionType): GameDecision {
     let score = this.getHandScore()
-
     if (this.type === 'human') {
       return this.gameStatus === 'betting'
         ? new GameDecision('bet', userData as number)
-        : new GameDecision(userData as string)
+        : new GameDecision(userData as BlackjackActionType, this.bet)
     } else {
       switch (this.gameStatus) {
         case 'betting':
-          if (this.type === 'ai') {
-            this.bet = Math.floor(Math.random() * this.chips)
-            return new GameDecision('bet', this.bet)
-          } else {
-            return new GameDecision('wait')
-          }
+          // if (this.type === 'ai') {
+          // 掛け金は５刻みでランダムに決定
+          return new GameDecision(
+            'bet',
+            Math.floor((Math.random() * this.chips) / 10 + 1) * 5
+          )
+        // }
+        // else {
+        //   return new GameDecision('wait')
+        // }
         case 'acting':
-          if (score < 17) {
-            return Math.random() > 0.7
-              ? new GameDecision('hit')
-              : new GameDecision('double')
-          } else {
-            return new GameDecision('stand')
+          const rand = Math.random()
+
+          switch (this.name) {
+            case 'CPU: normal':
+              return rand > 0.5
+                ? new GameDecision('hit')
+                : new GameDecision('stand')
+            case 'CPU: hard':
+              if (score < 18) {
+                return rand > 0 && this.chips > this.bet
+                  ? new GameDecision('double', this.bet)
+                  : new GameDecision('hit')
+              } else {
+                return new GameDecision('stand')
+              }
+            default:
+              return new GameDecision('stand')
           }
         default:
           return new GameDecision('stand')
@@ -48,6 +66,10 @@ export default class BlackjackPlayer extends Player {
     }
   }
 
+  /*
+  getHandScore(): number
+  手札の合計スコアを計算して返す
+  */
   getHandScore(): number {
     let score = 0
     let aceCount = 0

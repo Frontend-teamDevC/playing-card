@@ -14,6 +14,7 @@ export type BlackjackStatusType =
   | 'waiting'
   | 'acting'
   | 'stand'
+  | 'double'
   | 'bust'
   | 'blackjack'
   | 'surrender'
