@@ -45,6 +45,9 @@ export default class BlackjackPlayer extends Player {
           const rand = Math.random()
 
           switch (this.name) {
+            case 'CPU: easy':
+              return new GameDecision('stand')
+
             case 'CPU: normal':
               return rand > 0.5
                 ? new GameDecision('hit')
@@ -58,12 +61,15 @@ export default class BlackjackPlayer extends Player {
                 return new GameDecision('stand')
               }
             default:
-              return new GameDecision('stand')
+              if (score < 17) {
+                return new GameDecision('hit')
+              } else {
+                return new GameDecision('stand')
+              }
           }
-        default:
-          return new GameDecision('stand')
       }
     }
+    return new GameDecision('stand')
   }
 
   /*
