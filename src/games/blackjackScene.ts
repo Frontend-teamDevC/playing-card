@@ -2,7 +2,7 @@ import { Controller } from '../controller/controller'
 import BlackjackTable from '../model/blackjack/blackjackTable'
 import Player from '../model/common/player'
 import { BaseScene } from './common/baseScene'
-import { Button } from './components/button'
+import { Button } from './common/button'
 import Text = Phaser.GameObjects.Text
 import Image = Phaser.GameObjects.Image
 
@@ -47,7 +47,6 @@ export class BlackjackView extends BaseScene {
     this.#playersHandsImages = [[], [], [], []]
     this.#dealerHandImages = []
 
-    console.log()
     this.table = data.table
     this.user = this.table!.players[0]
     this.dealer = this.table!.dealer
@@ -58,10 +57,9 @@ export class BlackjackView extends BaseScene {
   }
 
   renderScene() {
-    this.userChipText()
-    this.userBetText()
+    this.userChipCount()
+    this.userBetCount()
 
-    console.log(this.table!.gamePhase)
     if (this.table!.roundCount === this.table!.maxRounds) {
       this.finalResults()
       return
@@ -74,8 +72,8 @@ export class BlackjackView extends BaseScene {
         this.#userChipCount = this.user!.chips
         this.#userChipText!.destroy()
         this.#userBetText!.destroy()
-        this.userChipText()
-        this.userBetText()
+        this.userChipCount()
+        this.userBetCount()
         return
 
       case 'evaluating':
@@ -85,11 +83,10 @@ export class BlackjackView extends BaseScene {
         this.#userChipCount = this.user!.chips
         this.#userChipText!.destroy()
         this.#userBetText!.destroy()
-        this.userChipText()
-        this.userBetText()
+        this.userChipCount()
+        this.userBetCount()
         return
       case 'dealer turn':
-        // flip the dealer's card once
         if (this.dealer!.gameStatus === 'waiting') {
           this.flipDealerCard()
         }
@@ -126,29 +123,22 @@ export class BlackjackView extends BaseScene {
           this.betButton()
           this.clearButton()
         } else if (this.table!.gamePhase === 'acting') {
-          // deal hands if hands are not dealt yet
           if (this.#playersHandsImages[0].length === 0) {
             this.dealInitialHands()
           }
-
           this.playersInfo()
-
           if (this.table!.playerActionResolved(turnPlayer)) {
             this.table!.haveTurn()
             this.renderScene()
           } else {
-            this.hitButton()
-            this.standButton()
-            this.doubleButton()
-            this.surrenderButton()
+            this.actionButtons()
           }
         }
         break
 
       default:
         this.playersInfo()
-        // this.currentHands()
-        // this.
+
         setTimeout(() => {
           switch (this.table!.gamePhase) {
             case 'betting':
@@ -171,7 +161,7 @@ export class BlackjackView extends BaseScene {
     for (let i = 0; i < this.table!.betDenominations.length; i++) {
       const chipButton = new Button(
         this,
-        220 + i * 100,
+        350 + i * 100,
         300,
         this.table!.betDenominations[i].toString(),
         'coin',
@@ -190,10 +180,10 @@ export class BlackjackView extends BaseScene {
               ? this.table!.betDenominations[i]
               : 0
           this.#userChipText!.destroy()
-          this.userChipText()
+          this.userChipCount()
 
           this.#userBetText!.destroy()
-          this.userBetText()
+          this.userBetCount()
         }
       )
       this.#chipButtons.push(chipButton)
@@ -203,7 +193,7 @@ export class BlackjackView extends BaseScene {
   betButton() {
     this.#betButton = new Button(
       this,
-      420,
+      650,
       400,
       `Bet ${this.#userBetCount} & Deal`,
       'orange-button',
@@ -226,7 +216,7 @@ export class BlackjackView extends BaseScene {
   clearButton() {
     this.#clearButton = new Button(
       this,
-      220,
+      450,
       400,
       `Clear`,
       'orange-button',
@@ -238,25 +228,31 @@ export class BlackjackView extends BaseScene {
         this.#betButton?.destroy()
         this.betButton()
         this.#userBetText!.destroy()
-        this.userBetText()
+        this.userBetCount()
 
         this.#userChipCount += this.user!.bet
         this.#userChipText!.destroy()
-        this.userChipText()
+        this.userChipCount()
       }
     )
+  }
+
+  actionButtons() {
+    this.hitButton()
+    this.standButton()
+    this.doubleButton()
+    this.surrenderButton()
   }
 
   hitButton() {
     const hitButton = new Button(
       this,
-      100,
-      700,
+      200,
+      600,
       'Hit',
       'orange-button',
       'select-se',
       () => {
-        // destroy
         this.#actionButtons.forEach((button: Button) => button.destroy())
 
         this.table!.haveTurn('hit')
@@ -270,8 +266,8 @@ export class BlackjackView extends BaseScene {
   standButton() {
     const standButton = new Button(
       this,
-      300,
-      700,
+      400,
+      600,
       'Stand',
       'orange-button',
       'select-se',
@@ -288,8 +284,8 @@ export class BlackjackView extends BaseScene {
   doubleButton() {
     const doubleButton = new Button(
       this,
-      500,
-      700,
+      600,
+      600,
       'Double',
       'orange-button',
       'select-se',
@@ -307,12 +303,14 @@ export class BlackjackView extends BaseScene {
   surrenderButton() {
     const surrenderButton = new Button(
       this,
-      700,
-      700,
+      800,
+      600,
       'Surrender',
       'orange-button',
       'select-se',
       () => {
+        this.#actionButtons.forEach((button: Button) => button.destroy())
+
         this.table!.haveTurn('surrender')
         this.renderScene()
       }
@@ -321,11 +319,10 @@ export class BlackjackView extends BaseScene {
   }
 
   playersInfo() {
-    // destroy previous texts
-    this.#playerNameTexts.forEach((text: Text) => text.destroy())
-    this.#chipTexts.forEach((text: Text) => text.destroy())
-    this.#betTexts.forEach((text: Text) => text.destroy())
-    this.#scoreTexts.forEach((text: Text) => text.destroy())
+    // this.#playerNameTexts.forEach((text: Text) => text.destroy())
+    // this.#chipTexts.forEach((text: Text) => text.destroy())
+    // this.#betTexts.forEach((text: Text) => text.destroy())
+    // this.#scoreTexts.forEach((text: Text) => text.destroy())
 
     this.playerNameTexts()
     this.chipTexts()
@@ -336,8 +333,9 @@ export class BlackjackView extends BaseScene {
   playerNameTexts() {
     // destroy previous texts
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
-    const dealerNameText = this.add.text(350, 60, `${this.dealer!.name}`, {
-      fontSize: '20px',
+
+    const dealerNameText = this.add.text(480, 50, `${this.dealer!.name}`, {
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
@@ -347,11 +345,11 @@ export class BlackjackView extends BaseScene {
     for (let i = 0; i < this.table!.players.length; i++) {
       const player = this.table!.players[i]
       const playerNameText = this.add.text(
-        100 + i * 250,
-        280,
+        80 + i * 380,
+        270,
         `${player.name}`,
         {
-          fontSize: '20px',
+          fontSize: '30px',
           color: '#ffffff',
           fontFamily: 'pixel'
         }
@@ -360,22 +358,22 @@ export class BlackjackView extends BaseScene {
     }
   }
 
-  userChipText() {
+  userChipCount() {
     this.#userChipText?.destroy()
 
-    const userChipText = this.add.text(0, 30, `Chips: ${this.#userChipCount}`, {
-      fontSize: '20px',
+    const userChipText = this.add.text(5, 30, `Chips: ${this.#userChipCount}`, {
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
     this.#userChipText = userChipText
   }
 
-  userBetText() {
+  userBetCount() {
     this.#userBetText?.destroy()
 
-    const userBetText = this.add.text(0, 60, `Bet: ${this.#userBetCount}`, {
-      fontSize: '20px',
+    const userBetText = this.add.text(5, 60, `Bet: ${this.#userBetCount}`, {
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
@@ -383,14 +381,16 @@ export class BlackjackView extends BaseScene {
   }
 
   chipTexts() {
+    this.#chipTexts.forEach((text: Text) => text.destroy())
+
     for (let i = 0; i < this.table!.players.length; i++) {
       const player = this.table!.players[i]
       const chipText = this.add.text(
-        100 + i * 250,
+        80 + i * 380,
         320,
         `Chips: ${player.chips}`,
         {
-          fontSize: '20px',
+          fontSize: '30px',
           color: '#ffffff',
           fontFamily: 'pixel'
         }
@@ -400,10 +400,12 @@ export class BlackjackView extends BaseScene {
   }
 
   betTexts() {
+    this.#betTexts.forEach((text: Text) => text.destroy())
+
     for (let i = 0; i < this.table!.players.length; i++) {
       const player = this.table!.players[i]
-      const betText = this.add.text(100 + i * 250, 340, `Bet: ${player.bet}`, {
-        fontSize: '20px',
+      const betText = this.add.text(80 + i * 380, 350, `Bet: ${player.bet}`, {
+        fontSize: '30px',
         color: '#ffffff',
         fontFamily: 'pixel'
       })
@@ -419,8 +421,8 @@ export class BlackjackView extends BaseScene {
         ? `Score: ${this.table!.dealer.getHandScore()}`
         : 'Score: ?'
 
-    const dealerScoreText = this.add.text(350, 100, dealerScore, {
-      fontSize: '20px',
+    const dealerScoreText = this.add.text(480, 100, dealerScore, {
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
@@ -431,8 +433,8 @@ export class BlackjackView extends BaseScene {
       const player = this.table!.players[i]
       const playerScore =
         player.hand.length > 0 ? `Score: ${player.getHandScore()}` : 'Score: ?'
-      const playerScoreText = this.add.text(100 + i * 250, 360, playerScore, {
-        fontSize: '20px',
+      const playerScoreText = this.add.text(80 + i * 380, 380, playerScore, {
+        fontSize: '30px',
         color: '#ffffff',
         fontFamily: 'pixel'
       })
@@ -450,7 +452,7 @@ export class BlackjackView extends BaseScene {
       const cardImage = this.add.image(400, 0, 'back')
       this.tweens.add({
         targets: cardImage,
-        x: 350 + i * 50,
+        x: 480 + i * 25,
         y: 180,
         duration: 1000,
         ease: 'Power2',
@@ -492,8 +494,8 @@ export class BlackjackView extends BaseScene {
         const cardImage = this.add.image(400, -10, card.getImageKey())
         this.tweens.add({
           targets: cardImage,
-          x: 100 + i * 250 + j * 50,
-          y: 440,
+          x: 100 + i * 380 + j * 25,
+          y: 460,
           sound: 'card-se',
           duration: 1000,
           ease: 'Power2',
@@ -531,11 +533,11 @@ export class BlackjackView extends BaseScene {
     let posX: number = 0
     let posY: number = 0
     if (player.type === 'dealer') {
-      posX = 350 + (player.hand.length - 1) * 50
+      posX = 460 + (player.hand.length - 1) * 25
       posY = 180
     } else {
-      posX = 100 + playerIndex * 250 + (player.hand.length - 1) * 50
-      posY = 440
+      posX = 100 + playerIndex * 380 + (player.hand.length - 1) * 25
+      posY = 460
     }
     this.tweens.add({
       targets: cardImage,
@@ -574,11 +576,10 @@ export class BlackjackView extends BaseScene {
   }
 
   flipDealerCard() {
-    // use the existing card image
+    // ディーラーの裏面になってるカード
     const card = this.dealer!.hand[1]
     const cardImage = this.#dealerHandImages[1]
 
-    // flip the card with animation
     setTimeout(() => {
       this.sound.play('card-flip-se')
 
@@ -632,7 +633,7 @@ export class BlackjackView extends BaseScene {
     }
     const resultsLog = this.table!.evaluateAndGetRoundResults()
     this.add.text(400, 300, resultsLog, {
-      fontSize: '20px',
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
@@ -643,8 +644,8 @@ export class BlackjackView extends BaseScene {
   nextButton(username: string) {
     const nextButton = new Button(
       this,
-      400,
-      400,
+      500,
+      500,
       'Next',
       'orange-button',
       'select-se',
@@ -681,7 +682,7 @@ export class BlackjackView extends BaseScene {
 
     const resultsLog = this.table!.evaluateAndGetFinalResults()
     this.add.text(400, 300, resultsLog, {
-      fontSize: '20px',
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
@@ -720,7 +721,7 @@ export class BlackjackView extends BaseScene {
 
     const resultsLog = 'You ran out of chips...'
     this.add.text(400, 300, resultsLog, {
-      fontSize: '20px',
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
@@ -732,8 +733,8 @@ export class BlackjackView extends BaseScene {
   againButton() {
     const againButton = new Button(
       this,
-      400,
-      400,
+      500,
+      500,
       'Again',
       'orange-button',
       'select-se',
@@ -756,8 +757,8 @@ export class BlackjackView extends BaseScene {
   backButton() {
     const backButton = new Button(
       this,
-      400,
       500,
+      600,
       'Back',
       'orange-button',
       'select-se',

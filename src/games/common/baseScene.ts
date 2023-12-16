@@ -1,13 +1,6 @@
 import Phaser from 'phaser'
-import Zone = Phaser.GameObjects.Zone
-import Text = Phaser.GameObjects.Text
 
 export class BaseScene extends Phaser.Scene {
-  #gameZone: Zone | null = null
-  #moneyText: Text | null = null
-  #nameText: Text | null = null
-  #username: string = ''
-
   create(data: any) {
     console.log(data)
 
@@ -22,8 +15,8 @@ export class BaseScene extends Phaser.Scene {
   }
 
   createNameText(username: string) {
-    this.#nameText = this.add.text(0, 0, `${username}`, {
-      fontSize: '20px',
+    this.add.text(5, 0, `${username}`, {
+      fontSize: '30px',
       color: '#ffffff',
       fontFamily: 'pixel'
     })
