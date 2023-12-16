@@ -92,7 +92,7 @@ export class Controller {
               difficulty,
               maxRounds
             )
-            BlackjackController.renderGameScene(table)
+            BlackjackController.startGame(table)
             break
           case 'war':
             // WarController.renderInitialPage()
