@@ -54,7 +54,7 @@ export default class BlackjackPlayer extends Player {
                 : new GameDecision('stand')
             case 'CPU: hard':
               if (score < 18) {
-                return rand > 0 && this.chips > this.bet
+                return rand > 0.9 && this.chips > this.bet
                   ? new GameDecision('double', this.bet)
                   : new GameDecision('hit')
               } else {

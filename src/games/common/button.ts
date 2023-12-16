@@ -48,14 +48,16 @@ export class Button extends Phaser.GameObjects.Container {
 
     this.#text = new Phaser.GameObjects.Text(scene, 0, 0, text, {
       color: '#000000',
-      fontSize: '20px',
-      fontFamily: 'pixel'
+      fontSize: '30px',
+      fontFamily: 'pixel',
+      //bold
+      fontStyle: 'bold'
     })
 
     // adjust image size
     const { width, height } = this.#text
-    this.#image.displayWidth = width + 20
-    this.#image.displayHeight = height + 20
+    this.#image.displayWidth = width + 50
+    this.#image.displayHeight = height + 50
 
     // adjust text position
     this.#text.x = -width / 2

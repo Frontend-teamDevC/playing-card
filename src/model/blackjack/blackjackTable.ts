@@ -74,6 +74,16 @@ export default class BlackjackTable extends Table {
   promptPlayer()で取得したプレイヤーの行動に応じてゲームの状態を更新する
   */
   evaluateMove(player: Player, userData?: number | BlackjackActionType): void {
+    if (player.gameStatus === '') {
+      player.gameStatus =
+        player.getHandScore() === 21 && player.hand.length === 2
+          ? 'blackjack'
+          : player.getHandScore() > 21
+            ? 'bust'
+            : 'stand'
+      return
+    }
+
     let decision =
       player.type === 'dealer'
         ? player.promptPlayer()
@@ -97,7 +107,7 @@ export default class BlackjackTable extends Table {
         player.bet += decision.amount!
         player.chips -= decision.amount!
         player.hand.push(this.deck.drawCard())
-        player.gameStatus = 'double'
+        player.gameStatus = player.type === 'human' ? 'double' : ''
         break
       case 'surrender':
         player.bet = Math.floor(player.bet / 2)
@@ -106,11 +116,15 @@ export default class BlackjackTable extends Table {
         return
     }
 
+    if (player.type === 'ai') return
+
     let score = player.getHandScore()
     if (score === 21) {
       player.gameStatus = player.hand.length === 2 ? 'blackjack' : 'stand'
+      return
     } else if (score > 21) {
       player.gameStatus = 'bust'
+      return
     }
   }
 
