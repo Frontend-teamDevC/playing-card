@@ -8,6 +8,7 @@ import Table from '../common/table'
 import BlackjackPlayer from './blackjackPlayer'
 
 export default class BlackjackTable extends Table {
+  user: BlackjackPlayer
   betDenominations: BlackjackBetDenominationType[] = [5, 10, 20, 50, 100]
   dealer: BlackjackPlayer
   roundCount: number = 0
@@ -23,10 +24,12 @@ export default class BlackjackTable extends Table {
     this.gamePhase = 'betting'
     this.difficulty = difficulty
     this.maxRounds = maxRounds
+
+    this.user = new BlackjackPlayer(name, 'human', gameType)
     this.dealer = new BlackjackPlayer('Dealer', 'dealer', gameType)
 
     const aiChips = difficulty === 'hard' ? 150 : 100
-    this.players.push(new BlackjackPlayer(name, 'human', gameType))
+    this.players.push(this.user)
     this.players.push(
       new BlackjackPlayer(`CPU: ${difficulty}`, 'ai', gameType, aiChips)
     )

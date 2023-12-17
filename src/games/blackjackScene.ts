@@ -6,7 +6,7 @@ import { Button } from './common/button'
 import Text = Phaser.GameObjects.Text
 import Image = Phaser.GameObjects.Image
 
-export class BlackjackView extends BaseScene {
+export class BlackjackScene extends BaseScene {
   table: BlackjackTable | null = null
   user: Player | null = null
   dealer: Player | null = null
@@ -765,7 +765,10 @@ export class BlackjackView extends BaseScene {
       () => {
         const root = document.getElementById('app')
         root!.innerHTML = ''
-        Controller.renderModeSelectPage(['blackjack', 'war'], 'player')
+        Controller.renderModeSelectPage(
+          ['blackjack', 'war', 'poker', 'speed'],
+          this.user!.name
+        )
       }
     )
     this.#backButton = backButton

@@ -21,8 +21,17 @@ export class ModeSelectView {
 
     const blackjackModal = this.modal('Blackjack', 'blackjack')
     const warModal = this.modal('War', 'war')
+    const pokerModal = this.modal('Poker', 'poker')
+    const speedModal = this.modal('Speed', 'speed')
 
-    container.append(backButton, title, blackjackModal, warModal)
+    container.append(
+      backButton,
+      title,
+      blackjackModal,
+      warModal,
+      pokerModal,
+      speedModal
+    )
     root?.append(container)
   }
 

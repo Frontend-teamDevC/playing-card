@@ -1,8 +1,10 @@
 import { Config } from '../config/pageConfig'
 import BlackjackTable from '../model/blackjack/blackjackTable'
+import SpeedTable from '../model/speed/speedTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
 import { BlackjackController } from './blackjackController'
+import { SpeedController } from './speedController'
 
 export class Controller {
   /*
@@ -19,7 +21,10 @@ export class Controller {
       ) as HTMLInputElement
       if (nameInput.value) {
         Config.displayNone()
-        this.renderModeSelectPage(['blackjack', 'war'], nameInput.value)
+        this.renderModeSelectPage(
+          ['blackjack', 'war', 'poker', 'speed'],
+          nameInput.value
+        )
       }
     })
   }
@@ -29,7 +34,6 @@ export class Controller {
   モード選択ページを描画する
   */
   static renderModeSelectPage(modeList: string[], username?: string): void {
-    console.log(username)
     ModeSelectView.create()
 
     const backButton = document.querySelector('.back-button')
@@ -44,14 +48,18 @@ export class Controller {
         // clear and render the tutorial page
         switch (mode) {
           case 'blackjack':
-            // BlackjackView.renderTutorial()
             break
           case 'war':
-            // WarView.renderTutorial()
+            break
+          case 'poker':
+            break
+          case 'speed':
             break
         }
       })
+
       const playButton = document.querySelector(`.${mode}-play-button`)
+
       // get value from pull down menus
       const difficultySelector = document.querySelector(
         '.blackjack-difficulty'
@@ -65,7 +73,6 @@ export class Controller {
       // change difficulty when difficultySelector is changed
       difficultySelector.addEventListener('change', () => {
         difficulty = difficultySelector.value
-        console.log(difficulty)
       })
       // change maxRounds when roundsSelector is changed
       roundsSelector.addEventListener('change', () => {
@@ -73,29 +80,35 @@ export class Controller {
         console.log(maxRounds)
       })
 
-      console.log(difficultySelector.value)
       playButton!.addEventListener('click', () => {
+        // back buttonだけ残す
+        console.log(mode)
         switch (mode) {
           case 'blackjack':
             Config.displayNone()
-            // back buttonだけ残す
-            const backButton = ModeSelectView.backButton()
-            backButton!.addEventListener('click', () => {
-              Config.displayNone()
-              this.renderModeSelectPage(['blackjack', 'war'])
-            })
 
             // render game scene
-            const table = new BlackjackTable(
-              'blackjack',
-              username!,
-              difficulty,
-              maxRounds
+            BlackjackController.startGame(
+              new BlackjackTable('blackjack', username!, difficulty, maxRounds)
             )
-            BlackjackController.startGame(table)
             break
           case 'war':
-            // WarController.renderInitialPage()
+            Config.displayNone()
+
+            break
+          case 'poker':
+            Config.displayNone()
+
+            break
+
+          case 'speed':
+            console.log('start speed game')
+
+            Config.displayNone()
+
+            SpeedController.startGame(
+              new SpeedTable('speed', username!, difficulty)
+            )
             break
         }
       })

@@ -18,7 +18,7 @@ export default abstract class Table {
 
   abstract assignPlayerHands(): void
   abstract evaluateMove(player: Player): void
-  abstract evaluateAndGetRoundResults(): string
-  abstract getTurnPlayer(): Player
-  abstract haveTurn(userData?: number | string): void
+  // abstract evaluateAndGetRoundResults(): string
+  // abstract getTurnPlayer(): Player
+  // abstract haveTurn(userData?: number | string): void
 }
