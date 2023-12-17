@@ -52,6 +52,7 @@ export default class BlackjackTable extends Table {
   終了したラウンドの情報をリセットする
   */
   resetRoundInfo(): void {
+    this.gamePhase = 'betting'
     for (let player of this.players) {
       player.hand = []
       player.bet = 0
@@ -65,7 +66,7 @@ export default class BlackjackTable extends Table {
       player.gameStatus = 'betting'
     }
 
-    this.turnCounter = 0
+    this.roundCount++
   }
 
   /*
@@ -73,6 +74,16 @@ export default class BlackjackTable extends Table {
   promptPlayer()で取得したプレイヤーの行動に応じてゲームの状態を更新する
   */
   evaluateMove(player: Player, userData?: number | BlackjackActionType): void {
+    if (player.gameStatus === '') {
+      player.gameStatus =
+        player.getHandScore() === 21 && player.hand.length === 2
+          ? 'blackjack'
+          : player.getHandScore() > 21
+            ? 'bust'
+            : 'stand'
+      return
+    }
+
     let decision =
       player.type === 'dealer'
         ? player.promptPlayer()
@@ -96,19 +107,24 @@ export default class BlackjackTable extends Table {
         player.bet += decision.amount!
         player.chips -= decision.amount!
         player.hand.push(this.deck.drawCard())
-        player.gameStatus = 'double'
+        player.gameStatus = player.type === 'human' ? 'double' : ''
         break
       case 'surrender':
         player.bet = Math.floor(player.bet / 2)
+        player.chips += player.bet
         player.gameStatus = 'surrender'
         return
     }
 
+    if (player.type === 'ai') return
+
     let score = player.getHandScore()
     if (score === 21) {
       player.gameStatus = player.hand.length === 2 ? 'blackjack' : 'stand'
+      return
     } else if (score > 21) {
       player.gameStatus = 'bust'
+      return
     }
   }
 
@@ -125,7 +141,7 @@ export default class BlackjackTable extends Table {
         result += `${player.name} surrendered. ${player.bet} chips returned.\n`
       } else if (player.gameStatus === 'blackjack') {
         if (this.dealer.gameStatus === 'blackjack') {
-          player.chips += player.bet
+          // player.chips += player.bet
           result += `${player.name} pushed.\n`
         } else {
           player.chips += player.bet * 2.5
@@ -137,20 +153,18 @@ export default class BlackjackTable extends Table {
         player.gameStatus = 'bust'
         result += `${player.name} busted.\n`
       } else if (dealerScore > 21) {
-        player.chips += player.bet * 2
+        player.chips += player.bet
         result += `${player.name} won ${player.bet * 2} chips.\n`
       } else if (playerScore > dealerScore) {
-        player.chips += player.bet * 2
+        player.chips += player.bet
         result += `${player.name} won ${player.bet * 2} chips.\n`
       } else if (playerScore < dealerScore) {
         result += `${player.name} lost ${player.bet} chips.\n`
       } else {
-        player.chips += player.bet
+        // player.chips += player.bet
         result += `${player.name} pushed.\n`
       }
     }
-    this.roundCount++
-    this.resetRoundInfo()
 
     if (this.roundCount === this.maxRounds) {
       this.evaluateAndGetFinalResults()
@@ -158,7 +172,6 @@ export default class BlackjackTable extends Table {
     if (this.players[0].chips <= 0) {
       this.gamePhase = 'game over'
     }
-    console.log(`Round ${this.roundCount} results:`)
 
     return result
   }
@@ -206,7 +219,6 @@ export default class BlackjackTable extends Table {
     let player = this.getTurnPlayer()
     if (this.allPlayerActionsResolved()) {
       this.gamePhase = 'dealer turn'
-      this.evaluateMove(this.dealer)
       return
     } else {
       if (player.gameStatus === 'waiting') {
@@ -240,6 +252,7 @@ export default class BlackjackTable extends Table {
   */
   playerActionResolved(player: Player): boolean {
     return (
+      player.gameStatus === 'double' ||
       player.gameStatus === 'bust' ||
       player.gameStatus === 'stand' ||
       player.gameStatus === 'surrender' ||
