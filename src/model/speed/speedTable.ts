@@ -1,3 +1,4 @@
+import Card from '../common/card'
 import Table from '../common/table'
 import Player from '../common/player'
 import SpeedPlayer from './speedPlayer'
@@ -6,6 +7,8 @@ export default class SpeedTable extends Table {
   user: SpeedPlayer
   dealer: SpeedPlayer
   difficulty: string
+  layoutCards: Card[] = []
+
   constructor(gameType: string, name: string, difficulty: string) {
     super(gameType)
 
@@ -13,11 +16,22 @@ export default class SpeedTable extends Table {
 
     this.user = new SpeedPlayer(name, 'human', gameType)
     this.dealer = new SpeedPlayer('Dealer', 'dealer', gameType)
+
+    this.assignPlayerDecks()
+    this.assignPlayerHands()
+    this.assignLayoutCards()
   }
 
+  /*
+        assignPlayerDecks(): void
+        ディーラーと全プレイヤーにカードを配る
+        */
   assignPlayerDecks(): void {
-    this.user.dividedDeck = this.deck.cards.slice(0, 26)
-    this.dealer.dividedDeck = this.deck.cards.slice(26, 52)
+    while (this.deck.cards.length > 0) {
+      this.user.dividedDeck.push(this.deck.cards.shift()!)
+      if (this.deck.cards.length <= 0) break
+      this.dealer.dividedDeck.push(this.deck.cards.shift()!)
+    }
   }
 
   /*
@@ -25,9 +39,19 @@ export default class SpeedTable extends Table {
     ディーラーと全プレイヤーにカードを4枚ずつ配る
     */
   assignPlayerHands(): void {
-    this.assignPlayerDecks()
-    this.user.hand = this.user.dividedDeck.slice(0, 4)
-    this.dealer.hand = this.dealer.dividedDeck.slice(0, 4)
+    for (let i = 0; i < 4; i++) {
+      this.user.hand.push(this.user.dividedDeck.shift()!)
+      this.dealer.hand.push(this.dealer.dividedDeck.shift()!)
+    }
+  }
+
+  /*
+        assignLayoutCards(): void
+        場札２枚を配置する
+        */
+  assignLayoutCards(): void {
+    this.layoutCards.push(this.user.dividedDeck.shift()!)
+    this.layoutCards.push(this.dealer.dividedDeck.shift()!)
   }
 
   /*
