@@ -1,8 +1,10 @@
 import { Config } from '../config/pageConfig'
 import BlackjackTable from '../model/blackjack/blackjackTable'
+import WarTable from '../model/war/warTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
 import { BlackjackController } from './blackjackController'
+import { WarController } from './warController'
 
 export class Controller {
   /*
@@ -95,6 +97,10 @@ export class Controller {
             BlackjackController.startGame(table)
             break
           case 'war':
+            Config.displayNone()
+            // render game scene
+            const tableWar = new WarTable('war')
+            WarController.startGame(tableWar)
             // WarController.renderInitialPage()
             break
         }

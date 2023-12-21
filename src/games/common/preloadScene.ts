@@ -98,6 +98,8 @@ export class PreloadScene extends Phaser.Scene {
     console.log(data.table)
     if (data.table.gameType === 'blackjack') {
       this.scene.start('blackjack', { table: data.table })
+    } else if (data.table.gameType === 'war') {
+      this.scene.start('war', { table: data.table })
     }
   }
 }
