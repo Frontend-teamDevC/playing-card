@@ -1,9 +1,11 @@
 import { Config } from '../config/pageConfig'
 import BlackjackTable from '../model/blackjack/blackjackTable'
+import WarTable from '../model/war/warTable'
 import SpeedTable from '../model/speed/speedTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
 import { BlackjackController } from './blackjackController'
+import { WarController } from './warController'
 import { SpeedController } from './speedController'
 
 export class Controller {
@@ -93,23 +95,16 @@ export class Controller {
             )
             break
           case 'war':
-            Config.displayNone()
-
             break
           case 'poker':
             Config.displayNone()
-
             break
-
           case 'speed':
             console.log('start speed game')
-
             Config.displayNone()
-
             SpeedController.startGame(
               new SpeedTable('speed', username!, difficulty)
             )
-            break
         }
       })
     }
