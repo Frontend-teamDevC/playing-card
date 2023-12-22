@@ -22,9 +22,6 @@ export class BlackjackScene extends BaseScene {
   #betButton: Button | null = null
   #clearButton: Button | null = null
   #actionButtons: Button[] = []
-  #nextButton: Button | null = null
-  #againButton: Button | null = null
-  #backButton: Button | null = null
 
   #playerNameTexts: Text[] = []
   #chipTexts: Text[] = []
@@ -751,7 +748,6 @@ export class BlackjackScene extends BaseScene {
         this.create({ table: this.table })
       }
     )
-    this.#againButton = againButton
   }
 
   backButton() {
@@ -771,7 +767,6 @@ export class BlackjackScene extends BaseScene {
         )
       }
     )
-    this.#backButton = backButton
   }
   static createTutorialView() {}
 }

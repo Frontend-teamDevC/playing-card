@@ -1,7 +1,5 @@
 import Card from '../model/common/card'
-// import Table from '../model/war/warTable'
 import { BaseScene } from './common/baseScene'
-import { Controller } from '../controller/controller'
 
 // import Phaser from 'phaser'
 
