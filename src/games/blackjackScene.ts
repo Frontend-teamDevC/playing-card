@@ -659,7 +659,6 @@ export class BlackjackView extends BaseScene {
         this.create({ table: this.table, difficulty: this.difficulty })
       }
     )
-    this.#nextButton = nextButton
   }
 
   finalResults() {
