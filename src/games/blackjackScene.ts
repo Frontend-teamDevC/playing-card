@@ -639,7 +639,7 @@ export class BlackjackView extends BaseScene {
   }
 
   nextButton() {
-    const nextButton = new Button(
+    return new Button(
       this,
       500,
       500,
