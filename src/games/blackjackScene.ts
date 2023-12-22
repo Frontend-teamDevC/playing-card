@@ -22,9 +22,6 @@ export class BlackjackView extends BaseScene {
   #betButton: Button | null = null
   #clearButton: Button | null = null
   #actionButtons: Button[] = []
-  #nextButton: Button | null = null
-  #againButton: Button | null = null
-  #backButton: Button | null = null
 
   #playerNameTexts: Text[] = []
   #chipTexts: Text[] = []
