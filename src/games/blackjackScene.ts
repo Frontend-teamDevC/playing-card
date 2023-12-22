@@ -659,7 +659,6 @@ export class BlackjackScene extends BaseScene {
         this.create({ table: this.table, difficulty: this.difficulty })
       }
     )
-    this.#nextButton = nextButton
   }
 
   finalResults() {
