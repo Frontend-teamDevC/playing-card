@@ -748,7 +748,6 @@ export class BlackjackView extends BaseScene {
         this.create({ table: this.table })
       }
     )
-    this.#againButton = againButton
   }
 
   backButton() {
@@ -765,7 +764,6 @@ export class BlackjackView extends BaseScene {
         Controller.renderModeSelectPage(['blackjack', 'war'], 'player')
       }
     )
-    this.#backButton = backButton
   }
   static createTutorialView() {}
 }
