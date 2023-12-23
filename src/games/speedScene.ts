@@ -16,11 +16,6 @@ export class SpeedScene extends BaseScene {
   #userCardsText: Text | null = null
   #dealerCardsText: Text | null = null
 
-  #countDownText: Text | null = null
-
-  #againButton: Button | null = null
-  #backButton: Button | null = null
-
   #playerNameTexts: Text[] = []
 
   #userHandsImages: Image[] = []
@@ -59,13 +54,18 @@ export class SpeedScene extends BaseScene {
     }
 
     this.dealInitialHandsAndDecks()
-    this.setLayoutCardImage(this.table!.layoutCards[0])
-    this.setLayoutCardImage(this.table!.layoutCards[1])
+    this.setLayoutCardImage(this.dealer!, this.table!.layoutCards[0], null!, 0)
+    this.setLayoutCardImage(this.user!, this.table!.layoutCards[1], null!, 1)
     setTimeout(() => {
       this.countDown()
     }, 6000)
 
     setTimeout(() => {
+      this.userDeckText()
+      this.dealerDeckText()
+
+      this.promptDealer()
+
       this.#userHandsImages.forEach((cardImage: Image, i: number) => {
         this.onCardDrag(cardImage, i)
       })
@@ -79,7 +79,6 @@ export class SpeedScene extends BaseScene {
       color: '#ffffff',
       fontFamily: 'pixel'
     })
-    this.#countDownText = countDownText
     const countDownInterval = setInterval(() => {
       count--
       countDownText.setText(count.toString())
@@ -137,7 +136,7 @@ export class SpeedScene extends BaseScene {
   dealInitialHandsAndDecks() {
     const dealerDeckImage = this.add.image(300, 150, 'back')
     this.#dealerDeckImage = dealerDeckImage
-    this.dealerDeckText()
+    // this.dealerDeckText()
     const dealerHands = this.table!.dealer.hand
     for (let i = 0; i < dealerHands.length; i++) {
       const card = dealerHands[i]
@@ -186,14 +185,12 @@ export class SpeedScene extends BaseScene {
 
     const userDeckImage = this.add.image(800, 450, 'back')
     this.#userDeckImage = userDeckImage
-    this.userDeckText()
+    // this.userDeckText()
     const userHands = this.user!.hand
     for (let i = 0; i < userHands.length; i++) {
       const card = userHands[i]
-      // move card from the top center to the user's hand with sound
-      const cardImage = this.add.image(userDeckImage.x, userDeckImage.y, 'back')
 
-      // play sound for each card
+      const cardImage = this.add.image(userDeckImage.x, userDeckImage.y, 'back')
 
       setTimeout(() => {
         this.tweens.add({
@@ -235,16 +232,36 @@ export class SpeedScene extends BaseScene {
     }
   }
 
-  setLayoutCardImage(card: Card, cardImage?: Image) {
-    const i = this.table!.layoutCards.indexOf(card)
+  setLayoutCardImage(
+    player: SpeedPlayer,
+    card: Card,
+    cardImage: Image,
+    layoutIndex: number
+  ) {
+    const deckImage =
+      player.name === 'Dealer' ? this.#dealerDeckImage : this.#userDeckImage
+    const newLayoutImage =
+      this.#layoutCardsImages[layoutIndex] === undefined
+        ? this.add.image(deckImage!.x, deckImage!.y, 'back')
+        : cardImage
+
     const xPos =
-      i === 0 ? this.#dealerDeckImage!.x + 150 : this.#userDeckImage!.x - 150
+      layoutIndex === 0
+        ? this.#dealerDeckImage!.x + 150
+        : this.#userDeckImage!.x - 150
     const yPos =
-      i === 0 ? this.#dealerDeckImage!.y + 150 : this.#userDeckImage!.y - 150
-    if (cardImage) {
-      console.log(cardImage)
+      layoutIndex === 0
+        ? this.#dealerDeckImage!.y + 150
+        : this.#userDeckImage!.y - 150
+
+    // 場札リセットのとき、#layoutCardsImagesに適切に追加されてない
+
+    this.table!.layoutCards[layoutIndex] = card
+    if (newLayoutImage.texture.key !== 'back') {
+      this.#layoutCardsImages[layoutIndex] = newLayoutImage!
+
       this.tweens.add({
-        targets: cardImage,
+        targets: newLayoutImage,
         x: xPos,
         y: yPos,
         duration: 250,
@@ -254,20 +271,14 @@ export class SpeedScene extends BaseScene {
           this.sound.play('card-se')
         }
       })
-
-      this.#layoutCardsImages.splice(i, 1, cardImage)
-      console.log(this.#layoutCardsImages)
       return
     }
 
-    const deckImage = i === 0 ? this.#dealerDeckImage : this.#userDeckImage
-    const layoutImage = this.add.image(deckImage!.x, deckImage!.y, 'back')
-
-    this.#layoutCardsImages.push(layoutImage!)
+    // newLayoutImage.texture.key = `${card.rank}${card.suit}`
 
     setTimeout(() => {
       this.tweens.add({
-        targets: layoutImage,
+        targets: newLayoutImage,
         x: xPos,
         y: yPos,
         duration: 250,
@@ -281,15 +292,17 @@ export class SpeedScene extends BaseScene {
 
     setTimeout(() => {
       this.add.tween({
-        targets: layoutImage,
+        targets: newLayoutImage,
         scaleX: 0,
         ease: 'Power2',
         duration: 500,
         delay: 500,
         onComplete: () => {
-          layoutImage.setTexture(`${card.rank}${card.suit}`)
+          newLayoutImage!.setTexture(`${card.rank}${card.suit}`)
+          console.log(newLayoutImage.texture.key)
+          this.#layoutCardsImages.push(newLayoutImage!)
           this.add.tween({
-            targets: layoutImage,
+            targets: newLayoutImage,
             scaleX: 1,
             ease: 'Power2',
             duration: 500,
@@ -320,8 +333,6 @@ export class SpeedScene extends BaseScene {
 
     cardImage.on('dragstart', (pointer: any, dragX: number, dragY: number) => {
       this.sound.play('card-flip-se')
-      console.log(this.#layoutCardsImages[0].texture.key[0])
-      console.log(this.#layoutCardsImages[1].texture.key[0])
 
       // layout cardImageより前面に出す
       this.children.bringToTop(cardImage)
@@ -341,7 +352,12 @@ export class SpeedScene extends BaseScene {
           this.rankIsNextToLayout(cardImage, this.#layoutCardsImages[0])
             ? this.#layoutCardsImages[0]
             : this.#layoutCardsImages[1]
-        this.submitCard(this.user, cardImage, layout, i)
+        const layoutIndex = this.#layoutCardsImages.indexOf(layout)
+        this.submitCard(this.user, cardImage, layout, i, layoutIndex)
+
+        // reset the timeout for the previous prompt to dealer
+
+        // this.promptDealer()
       } else {
         this.toPrevPosition(cardImage, prevX, prevY)
       }
@@ -363,7 +379,53 @@ export class SpeedScene extends BaseScene {
     )
   }
 
+  canSubmit(player: SpeedPlayer | null, handImages: Image[]): boolean {
+    // return handImages.some((cardImage: Image) => {
+    //   return this.#layoutCardsImages.some((layoutImage: Image) => {
+    //     return this.rankIsNextToLayout(cardImage, layoutImage)
+    //   })
+    // })
+
+    for (let handImage of handImages) {
+      for (let layoutImage of this.#layoutCardsImages) {
+        if (this.rankIsNextToLayout(handImage, layoutImage)) return true
+      }
+    }
+    return false
+  }
+
+  promptDealer() {
+    setTimeout(() => {
+      if (this.canSubmit(this.dealer, this.#dealerHandImages)) {
+        this.submitCard(this.dealer)
+      } else if (!this.canSubmit(this.user, this.#userHandsImages)) {
+        this.#layoutCardsImages.shift()
+        this.#layoutCardsImages.shift()
+        this.setLayoutCardImage(
+          this.dealer!,
+          this.dealer!.dividedDeck.shift()!,
+          null!,
+          0
+        )
+        this.setLayoutCardImage(
+          this.user!,
+          this.user!.dividedDeck.shift()!,
+          null!,
+          1
+        )
+        console.log(this.#layoutCardsImages[0])
+        console.log(this.#layoutCardsImages[1])
+      }
+      // else return
+    }, 3000)
+    setTimeout(() => {
+      this.promptDealer()
+    }, 10000)
+  }
+
   getRank(cardImage: Image): number {
+    if (cardImage.texture.key.substring(0, 2) === '10') return 10
+
     switch (cardImage.texture.key[0]) {
       case 'A':
         return 1
@@ -374,7 +436,7 @@ export class SpeedScene extends BaseScene {
       case 'K':
         return 13
       default:
-        return parseInt(cardImage.texture.key)
+        return parseInt(cardImage.texture.key[0])
     }
   }
 
@@ -399,94 +461,137 @@ export class SpeedScene extends BaseScene {
 
   submitCard(
     player: SpeedPlayer | null,
-    cardImage: Image,
-    layoutImage: Image,
-    i: number
+    cardImage?: Image,
+    layoutImage?: Image,
+    handIndex?: number,
+    layoutIndex?: number
   ) {
     if (player!.hand.length === 0) return
-    const card = player!.hand[i]
+
+    if (player!.name === 'Dealer') {
+      return this.#dealerHandImages.some((handImage: Image, i: number) => {
+        return this.#layoutCardsImages.some((layoutImage: Image, j: number) => {
+          if (this.rankIsNextToLayout(handImage, layoutImage)) {
+            this.children.bringToTop(handImage)
+
+            this.add.tween({
+              targets: handImage,
+              x: layoutImage.x,
+              y: layoutImage.y,
+              duration: 250,
+              ease: 'Power2',
+              delay: 500,
+              onStart: () => {
+                this.sound.play('card-se')
+              }
+            })
+            const card = player!.hand[i]
+            const cardIndex = player!.hand.indexOf(card)
+
+            player!.hand.splice(cardIndex, 1)
+            // this.table!.layoutCards.splice(layoutIndex, 1, card)
+            this.#dealerHandImages.splice(i, 1)
+            // this.#layoutCardsImages.splice(j, 1, cardImage)
+            handImage!.scaleX = 1
+            handImage!.scaleY = 1
+            handImage!.disableInteractive()
+            // card's position is set to the layout's position
+            handImage!.x = layoutImage!.x
+
+            this.#userHandsImages.splice(i, 1)
+            this.userDeckText()
+            this.dealerDeckText()
+            this.setLayoutCardImage(this.user!, card, handImage, j)
+            this.drawCardImageFromDeck(player!, i)
+
+            // this.promptDealer()
+            return true
+          }
+        })
+      })
+    }
+
+    handIndex = !handIndex!
+      ? this.#userHandsImages.indexOf(cardImage!)
+      : handIndex
+
+    const card = player!.hand[handIndex!]
     const cardIndex = player!.hand.indexOf(card)
-    const layoutIndex = this.table!.layoutCards.indexOf(
-      this.table!.layoutCards.find(
-        (card: Card) =>
-          card.rank === layoutImage.texture.key[0] &&
-          card.suit === layoutImage.texture.key[1]
-      )!
-    )
-    console.log(layoutIndex)
 
     player!.hand.splice(cardIndex, 1)
-    // remove the layout card and insert the card to the layout
-    this.table!.layoutCards.splice(layoutIndex, 1, card)
+    // this.table!.layoutCards.splice(layoutIndex, 1, card)
+    this.#userHandsImages.splice(handIndex!, 1)
+    // this.#layoutCardsImages.splice(layoutIndex, 1, cardImage!)
 
-    cardImage.scaleX = 1
-    cardImage.scaleY = 1
-    cardImage.disableInteractive()
+    cardImage!.scaleX = 1
+    cardImage!.scaleY = 1
+    cardImage!.disableInteractive()
     // card's position is set to the layout's position
-    cardImage.x = layoutImage.x
+    cardImage!.x = layoutImage!.x
 
-    this.#userHandsImages.splice(i, 1)
     this.userDeckText()
     this.dealerDeckText()
-    this.drawCardImageFromDeck(player!, i)
-
-    this.setLayoutCardImage(card, cardImage)
+    this.setLayoutCardImage(this.user!, card, cardImage!, layoutIndex!)
+    this.drawCardImageFromDeck(player!, handIndex!)
   }
 
   drawCardImageFromDeck(player: SpeedPlayer, i: number) {
     // if (this.table!.canSubmit(player)) return
     if (player.dividedDeck.length === 0) return
 
+    // -1になることがある
+    console.log('draw card index: ' + i)
+
     const card = player.dividedDeck.shift()!
-    const cardImage = this.add.image(
-      this.#userDeckImage!.x,
-      this.#userDeckImage!.y,
-      'back'
-    )
-    this.#userHandsImages.push(cardImage)
-    this.user!.hand.push(card)
+    const deckImage =
+      player.name === 'Dealer' ? this.#dealerDeckImage : this.#userDeckImage
+    const xPos =
+      player.name === 'Dealer'
+        ? deckImage!.x + 100 + i * 100
+        : deckImage!.x - 100 - i * 100
+    let cardImage = this.add.image(deckImage!.x, deckImage!.y, 'back')
 
-    setTimeout(() => {
-      this.tweens.add({
-        targets: cardImage,
-        x: this.#userDeckImage!.x - 100 - i * 100,
-        y: this.#userDeckImage!.y,
-        duration: 150,
-        ease: 'Power2'
-      })
-    }, 100)
+    this.tweens.add({
+      targets: cardImage,
+      x: xPos,
+      y: deckImage!.y,
+      duration: 150,
+      ease: 'Power2'
+    })
 
-    setTimeout(() => {
-      this.add.tween({
-        targets: cardImage,
-        scaleX: 0,
-        ease: 'Power2',
-        duration: 250,
-        delay: 500,
-        onComplete: () => {
-          cardImage.setTexture(`${card.rank}${card.suit}`)
-          this.add.tween({
-            targets: cardImage,
-            scaleX: 1,
-            ease: 'Power2',
-            duration: 150,
-            delay: 500
-          })
-        }
-      })
-      this.sound.play('card-flip-se')
-    }, 200)
-
-    cardImage.x = this.#userDeckImage!.x - 100 - i * 100
-    this.onCardDrag(cardImage, i)
+    // setTimeout(() => {
+    this.tweens.add({
+      targets: cardImage,
+      scaleX: 0,
+      ease: 'Power2',
+      duration: 250,
+      delay: 500,
+      onComplete: () => {
+        cardImage.setTexture(`${card.rank}${card.suit}`)
+        this.add.tween({
+          targets: cardImage,
+          scaleX: 1,
+          ease: 'Power2',
+          duration: 250,
+          delay: 500
+        })
+      }
+    })
+    this.sound.play('card-flip-se')
+    // }, 200)
+    cardImage = this.add.image(xPos, deckImage!.y, `${card.rank}${card.suit}`)
 
     if (player.name === 'Dealer') {
-      this.#dealerHandImages.splice(i, 1, cardImage)
+      this.#dealerHandImages.splice(i, 0, cardImage)
+      this.dealer!.hand.splice(i, 0, card)
+      cardImage.x = deckImage!.x + 100 + i * 100
     } else {
-      this.#userHandsImages.splice(i, 1, cardImage)
+      this.#userHandsImages.splice(i, 0, cardImage)
+      this.user!.hand.splice(i, 0, card)
+      cardImage.x = deckImage!.x - 100 - i * 100
+      this.onCardDrag(cardImage, i)
     }
   }
-
   toPrevPosition(gameObject: Image, prevX: number, prevY: number) {
     this.tweens.add({
       targets: gameObject,
@@ -529,7 +634,6 @@ export class SpeedScene extends BaseScene {
         this.create({ table: this.table })
       }
     )
-    this.#againButton = againButton
   }
 
   backButton() {
@@ -546,7 +650,6 @@ export class SpeedScene extends BaseScene {
         Controller.renderModeSelectPage(['blackjack', 'war'], 'player')
       }
     )
-    this.#backButton = backButton
   }
   static createTutorialView() {}
 }
