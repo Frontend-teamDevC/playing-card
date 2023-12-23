@@ -1,7 +1,9 @@
 import Card from '../model/common/card'
+import Table from '../model/war/warTable'
 import { BaseScene } from './common/baseScene'
-
-// import Phaser from 'phaser'
+import { Button } from './common/button'
+import { Controller } from '../controller/controller'
+import { WarController } from '../controller/warController'
 
 export class WarView extends BaseScene {
   table: any
@@ -20,11 +22,6 @@ export class WarView extends BaseScene {
   playerCardXtemp: any
   dealerBattleCard: any = []
   playerBattleCard: any = []
-
-  constructor() {
-    super()
-    // this.table = new Table('war')
-  }
 
   preload() {
     const suits = ['C', 'S', 'D', 'H']
@@ -176,7 +173,6 @@ export class WarView extends BaseScene {
             if (this.playerHandIndex == i) {
               player.warCard = player.hand[i]
               player.hand[i] = null
-              console.log(player.hand)
             }
           }
 
@@ -351,10 +347,8 @@ export class WarView extends BaseScene {
     }
 
     this.handCheck()
-    console.log(this.table.gamePhase)
 
     if (this.table.gamePhase == 'end') {
-      console.log('=== GAME OVER ===')
       this.result()
     } else {
       this.time.delayedCall(1000, () => {
@@ -414,16 +408,39 @@ export class WarView extends BaseScene {
     let dealer = this.table.players[0]
     let player = this.table.players[1]
 
+    new Button(this, 500, 500, 'Again', 'orange-button', 'select-se', () => {
+      const root = document.getElementById('app')
+      root!.innerHTML = ''
+      WarController.startGame(new Table('war'))
+    })
+
+    new Button(this, 500, 600, 'Back', 'orange-button', 'select-se', () => {
+      const root = document.getElementById('app')
+      root!.innerHTML = ''
+      Controller.renderModeSelectPage(['blackjack', 'war'], 'player')
+    })
+
     let dealerPocketLength = dealer.pocket.length
     let playerPocketLength = player.pocket.length
 
     if (dealerPocketLength > playerPocketLength) {
-      console.log('PLAYER LOSE')
-      this.add.text(500, 500, 'PLAYER LOSE')
+      this.add.text(
+        400,
+        200,
+        `PLAYER: ${playerPocketLength} / 🥇DEALER: ${dealerPocketLength}`
+      )
     } else if (dealerPocketLength < playerPocketLength) {
-      console.log('PLAYER WIN')
+      this.add.text(
+        400,
+        200,
+        `🥇PLAYER: ${playerPocketLength} / DEALER: ${dealerPocketLength}`
+      )
     } else {
-      console.log('DRAW')
+      this.add.text(
+        400,
+        200,
+        `PLAYER: ${playerPocketLength} / DEALER: ${dealerPocketLength}`
+      )
     }
   }
 }
