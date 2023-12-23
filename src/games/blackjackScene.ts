@@ -635,11 +635,11 @@ export class BlackjackScene extends BaseScene {
       fontFamily: 'pixel'
     })
 
-    this.nextButton(this.user!.name)
+    this.nextButton()
   }
 
-  nextButton(username: string) {
-    const nextButton = new Button(
+  nextButton() {
+    return new Button(
       this,
       500,
       500,
@@ -727,7 +727,7 @@ export class BlackjackScene extends BaseScene {
   }
 
   againButton() {
-    const againButton = new Button(
+    return new Button(
       this,
       500,
       500,
@@ -750,7 +750,7 @@ export class BlackjackScene extends BaseScene {
   }
 
   backButton() {
-    const backButton = new Button(
+    return new Button(
       this,
       500,
       600,

@@ -11,7 +11,7 @@ export class BaseScene extends Phaser.Scene {
   }
 
   createGameZone() {
-    this.add.zone(0, 0, 800, 600).setOrigin(0).setInteractive()
+    this.add.zone(0, 0, 800, 600).setOrigin(0)
   }
 
   createNameText(username: string) {
