@@ -1,0 +1,30 @@
+コンフリクトの解消
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Sun Dec 24 22:00:26 2023 +0900
+#
+# interactive rebase in progress; onto 0d421bb
+# Last commands done (13 commands done):
+#    pick 8c33060 #24 Fix: クリック時のbug修正
+#    pick e1c0ad4 ポーカーのphaserを導入したプロトタイプの作成
+# No commands remaining.
+# You are currently editing a commit while rebasing branch '#15_poker_proto' on '0d421bb'.
+#
+# Changes to be committed:
+#	new file:   public/assets/ui/gray-button.png
+#	modified:   src/config/pokerConfig.ts
+#	modified:   src/controller/controller.ts
+#	new file:   src/controller/pokerController.ts
+#	new file:   src/games/common/pokerButton.ts
+#	modified:   src/games/common/preloadScene.ts
+#	new file:   src/games/pokerScene.ts
+#	modified:   src/model/poker/pokerGameDecision.ts
+#	modified:   src/model/poker/pokerPlayer.ts
+#	modified:   src/model/poker/pokerTable.ts
+#	modified:   src/view/modeSelectView.ts
+#
+# Changes not staged for commit:
+#	modified:   src/controller/PokerController.ts
+#
