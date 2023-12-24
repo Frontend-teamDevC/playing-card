@@ -34,6 +34,7 @@ export class PokerView extends BaseScene {
     private dealerHandInfo: Sprite[] = [];
 
     create(data: any) {
+        console.log("POKER読み取り")
         // reset all the scene
         this.actionButtons = [];
         this.playerhandsImages = [];

@@ -106,7 +106,6 @@ export class Controller {
             // WarController.renderInitialPage()
             break
           case "poker":
-            console.log('poker clicked')
             Config.displayNone()
             const pokerTable = new PokerTable("poker", 5);
             PokerController.startGame(pokerTable);
