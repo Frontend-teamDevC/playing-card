@@ -3,10 +3,10 @@ import {
     pokerIndexOfNum,
     PokerActionType,
     PokerHandType,
-} from "../../config/pokerConfig";
-import Table from "../common/Table";
-import pokerGameDecision from "./pokerGameDecision";
-import pokerPlayer from "./pokerPlayer";
+} from "../../config/pokerConfig.js";
+import Table from "../common/table.js";
+import pokerGameDecision from "./pokerGameDecision.js";
+import pokerPlayer from "./pokerPlayer.js";
 
 export default class pokerTable extends Table {
     dealer: pokerPlayer;
@@ -401,7 +401,6 @@ export default class pokerTable extends Table {
         return flag;
     }
 
-
     // プレイヤーのアクションを評価し、ゲームの進行状態を変更するメソッド。
     evaluateMove(player: pokerPlayer, userData?: PokerActionType): void {
         if (player.type == "dealer") {
@@ -412,8 +411,8 @@ export default class pokerTable extends Table {
             } else if (this.turnCounter < 3) {
                 this.dealer.hand.push(this.deck.drawCard());
             }
-            this.turnCounter++;
             console.log("turnCounter !!: ", this.turnCounter);
+            this.turnCounter++;
 
             if (this.turnCounter == 4) {
                 console.log("最終ラウンドまで来た。");
@@ -425,9 +424,6 @@ export default class pokerTable extends Table {
             this.betMoney = this.minbet;
             console.log("ディーラーのhand", this.dealer.hand);
             console.log("次のラウンドの開始person", this.getTurnPlayer().name);
-            this.gamePhase == "evaluating"
-                ? (this.gamePhase = "evaluating")
-                : (this.gamePhase = "betting");
             this.printPlayerStatus();
         } else {
             // playerIndexCounter == betIndex : 1周してきた時
@@ -437,8 +433,8 @@ export default class pokerTable extends Table {
                 player.gameStatus != "bet" &&
                 player.gameStatus != "blind"
             ) {
-                console.log("一周してきました。ディーラーに移行");
                 this.gamePhase = "dealer turn";
+                return;
             }
 
             let gameDecision: pokerGameDecision = player.promptPlayer(
@@ -533,10 +529,15 @@ export default class pokerTable extends Table {
 
     // プレイヤーのターンを処理するメソッド.
     haveTurn(userData?: PokerActionType): void {
-        console.log("ゲームフェーズ");
-        if (this.gamePhase == "dealer turn") {
-            console.log("ディーラーターン");
-            this.evaluateMove(this.dealer);
+        if (this.gamePhase == "dealer turn") this.gamePhase = "betting";
+        else if (this.gamePhase == "evaluating") {
+            console.log("ROUND  OWARI!!!!");
+            this.resultsLog.push(this.evaluateAndGetRoundResults());
+            this.clearPlayerHandsAndBets();
+            this.roundCounter++;
+            this.gamePhase = "blinding";
+            console.log("ラウンド終了、次のラウンドです。=>",this.gamePhase);
+            return;
         }
 
         let player = this.getTurnPlayer();
@@ -548,10 +549,17 @@ export default class pokerTable extends Table {
         if (this.allPlayerActionResolved()) {
             this.gamePhase = "dealer turn";
             this.evaluateMove(this.dealer);
+            console.log(
+                "this.gamePhase: ",
+                "ディーラーのターンです。",
+                this.gamePhase
+            );
         } else {
             if (
                 (playerBefore.gameStatus == "check" ||
-                    playerBefore.gameStatus == "bet") &&
+                    (this.playerIndexCounter == this.dealerIndex + 1 &&
+                        this.gamePhase != "blinding")) &&
+                // playerBefore.gameStatus == "bet"
                 (userData == "check" || player.type == "ai")
             ) {
                 // checkできる。
@@ -570,14 +578,10 @@ export default class pokerTable extends Table {
                 playerBefore.gameStatus !== "fold" &&
                 userData == "check"
             ) {
-                // window.alert(
-                //     "前のプレイヤーがcheckしてなからcheckできません。"
-                // );
                 console.log("前のプレイヤーがcheckしてなからcheckできません。");
                 // call　or raise or fold => 選択
                 this.evaluateMove(player, "call");
             }
-
             // playerの所持金が現在のベット金額より小さかったら allin
             // callの場合
             else if (player.chips < this.betMoney) {
@@ -597,23 +601,17 @@ export default class pokerTable extends Table {
                 console.log("強制call");
                 this.evaluateMove(player, "call");
             } else {
-                console.log("userAction: ", userData);
+                console.log("userAction: ", player.type, userData);
                 player.type == "player"
                     ? this.evaluateMove(player, userData as PokerActionType)
                     : // ai
-                      this.evaluateMove(player);
+                    this.gamePhase == "betting"
+                    ? this.evaluateMove(player, "bet")
+                    : this.evaluateMove(player);
             }
 
             // プレイヤーにカードを配る。
             this.moveToNextPlayer();
-        }
-
-        if (this.gamePhase == "evaluating") {
-            console.log("TURN  OWARI!!!!");
-            this.resultsLog.push(this.evaluateAndGetRoundResults());
-            this.clearPlayerHandsAndBets();
-            this.gamePhase = "blinding";
-            this.roundCounter++;
         }
     }
 

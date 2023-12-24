@@ -4,12 +4,10 @@ import {
     PokerPlayerType,
     PokerStatusType,
     pokerIndexOfNum,
-} from "../../config/pokerConfig.js";
-import Card from "../common/Card.js";
-import GameDecision from "../common/GameDecision.js";
-import Player from "../common/Player.js";
+} from "../../config/pokerConfig";
+import Card from "../common/card";
+import Player from "../common/player";
 import pokerGameDecision from "./pokerGameDecision.js";
-import pokerTable from "./pokerTable.js";
 
 export default class pokerPlayer extends Player {
     gameStatus: PokerStatusType;
@@ -59,31 +57,29 @@ export default class pokerPlayer extends Player {
                 ? new pokerGameDecision("fold")
                 : new pokerGameDecision("blind");
         } else {
-            // aiの実装
-            switch (this.gameStatus) {
-                case "blind":
-                    return new pokerGameDecision("blind", betMoney);
+        switch (userData) {
                 case "check":
                     return new pokerGameDecision("check");
                 case "fold":
                     return new pokerGameDecision("fold");
                 case "allin":
                     return new pokerGameDecision("allin", this.chips);
-                default:
+                case "bet":
                     const rand = Math.random();
-                    // if (rand > 0.9) return new pokerGameDecision("fold");
-                    //else
                     if (rand > 0.8)
                         return new pokerGameDecision(
                             "raise",
                             (betMoney as number) * 2
                         );
                     else return new pokerGameDecision("call", betMoney);
+                default:
+                    return new pokerGameDecision("blind", betMoney);
             }
         }
     }
 
-    getHandScore(dealer: Player): PokerHandType {
+
+    getHandScore(dealer: pokerPlayer): PokerHandType {
         console.log("before Concat", this.Cards);
         this.Cards = this.hand.concat(dealer.hand);
         const CardsMap: Record<string, number> = {};
