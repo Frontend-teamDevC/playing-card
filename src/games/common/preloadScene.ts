@@ -4,43 +4,63 @@ import { CardConfig } from '../../config/cardConfig'
 export class PreloadScene extends Phaser.Scene {
   #progressBox: Phaser.GameObjects.Graphics | null = null
   #progressBar: Phaser.GameObjects.Graphics | null = null
-  #loadText: Phaser.GameObjects.Text | null = null
-  #percenage: Phaser.GameObjects.Text | null = null
+  #loadingText: Phaser.GameObjects.Text | null = null
+  #percentText: Phaser.GameObjects.Text | null = null
 
   preload() {
     const { width, height } = this.cameras.main
 
-    // 背景
+    // ロードバーの背景
     this.#progressBox = this.add.graphics()
     this.#progressBox.fillStyle(0x222222, 0.8)
-    this.#progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50)
+    this.#progressBox.fillRect(width / 2 - 150, height / 2 - 30, 300, 30)
 
-    // プログレスバー
+    // ロードバーを作成
     this.#progressBar = this.add.graphics()
 
-    // プログレスバーのテキスト
-    this.#loadText = this.make.text({
+    // テキスト
+    this.#loadingText = this.make.text({
       x: width / 2,
       y: height / 2 - 50,
       text: 'Loading...',
-      style: {
-        font: '20px monospace'
-      }
+      style: { font: 'monospace' }
     })
-    this.#loadText.setOrigin(0.5, 0.5)
+    this.#loadingText.setOrigin(0.5, 0.5)
 
-    // ロード中
+    this.#percentText = this.make.text({
+      x: width / 2,
+      y: height / 2 + 30,
+      text: '0%',
+      style: { font: 'monospace' }
+    })
+    this.#percentText.setOrigin(0.5, 0.5)
+
+    // ロードイベント
     this.load.on('progress', (value: number) => {
-      if (this.#percenage && this.#progressBar) {
-        this.#percenage.setText(`${Math.floor(value * 100)}%`)
+      if (this.#percentText && this.#progressBar) {
+        this.#percentText.setText(`${Math.floor(value * 100)}%`)
         this.#progressBar.clear()
         this.#progressBar.fillStyle(0xffffff, 1)
         this.#progressBar.fillRect(
           width / 2 - 150,
-          height / 2 - 15,
+          height / 2 - 30,
           300 * value,
           30
         )
+      }
+    })
+
+    this.load.on('complete', () => {
+      if (
+        this.#progressBox &&
+        this.#progressBar &&
+        this.#loadingText &&
+        this.#percentText
+      ) {
+        this.#progressBar.destroy()
+        this.#progressBox.destroy()
+        this.#loadingText.destroy()
+        this.#percentText.destroy()
       }
     })
 
@@ -79,7 +99,7 @@ export class PreloadScene extends Phaser.Scene {
   }
 
   create(data: any) {
-    this.#percenage = this.make.text({
+    this.#percentText = this.make.text({
       x: this.cameras.main.width / 2,
       y: this.cameras.main.height / 2,
       text: '0%',
@@ -88,12 +108,12 @@ export class PreloadScene extends Phaser.Scene {
         fontFamily: 'pixel'
       }
     })
-    this.#percenage.setOrigin(0.5, 0.5)
+    this.#percentText.setOrigin(0.5, 0.5)
 
     this.#progressBox?.destroy()
     this.#progressBar?.destroy()
-    this.#loadText?.destroy()
-    this.#percenage?.destroy()
+    this.#loadingText?.destroy()
+    this.#percentText?.destroy()
 
     console.log(data.table)
     if (data.table.gameType === 'blackjack') {
