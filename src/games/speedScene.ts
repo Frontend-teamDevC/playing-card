@@ -6,6 +6,7 @@ import { Button } from './common/button'
 import Text = Phaser.GameObjects.Text
 import Image = Phaser.GameObjects.Image
 import SpeedPlayer from '../model/speed/speedPlayer'
+import { SpeedController } from '../controller/speedController'
 
 export class SpeedScene extends BaseScene {
   table: SpeedTable | null = null
@@ -23,11 +24,11 @@ export class SpeedScene extends BaseScene {
   #userDeckImage: Image | null = null
   #dealerDeckImage: Image | null = null
   #layoutCardsImages: Image[] = []
+  #piledLayoutCardsImages: Image[] = []
 
   create(data: any) {
     super.create(data)
 
-    // reset all the scene
     this.#userHandsImages = []
     this.#dealerHandImages = []
 
@@ -40,19 +41,6 @@ export class SpeedScene extends BaseScene {
   }
 
   renderScene() {
-    // this.userDeckCount()
-    // this.dealerDeckCount()
-    if (
-      this.dealer!.dividedDeck!.length === 0 ||
-      this.user!.dividedDeck!.length === 0
-    ) {
-      setTimeout(() => {
-        this.finalResults()
-      }, 5000)
-      this.finalResults()
-      return
-    }
-
     this.dealInitialHandsAndDecks()
     this.setLayoutCardImage(this.dealer!, this.table!.layoutCards[0], null!, 0)
     this.setLayoutCardImage(this.user!, this.table!.layoutCards[1], null!, 1)
@@ -240,6 +228,15 @@ export class SpeedScene extends BaseScene {
   ) {
     const deckImage =
       player.name === 'Dealer' ? this.#dealerDeckImage : this.#userDeckImage
+
+    if (player.dividedDeck.length <= 0) {
+      if (player.name === 'Dealer' && this.#dealerDeckImage !== null) {
+        this.#dealerDeckImage?.destroy()
+      } else if (this.#userDeckImage !== null) {
+        this.#userDeckImage?.destroy()
+      }
+    }
+
     const newLayoutImage =
       this.#layoutCardsImages[layoutIndex] === undefined
         ? this.add.image(deckImage!.x, deckImage!.y, 'back')
@@ -253,8 +250,6 @@ export class SpeedScene extends BaseScene {
       layoutIndex === 0
         ? this.#dealerDeckImage!.y + 150
         : this.#userDeckImage!.y - 150
-
-    // 場札リセットのとき、#layoutCardsImagesに適切に追加されてない
 
     this.table!.layoutCards[layoutIndex] = card
     if (newLayoutImage.texture.key !== 'back') {
@@ -274,21 +269,19 @@ export class SpeedScene extends BaseScene {
       return
     }
 
-    // newLayoutImage.texture.key = `${card.rank}${card.suit}`
-
-    setTimeout(() => {
-      this.tweens.add({
-        targets: newLayoutImage,
-        x: xPos,
-        y: yPos,
-        duration: 250,
-        ease: 'Power2',
-        delay: 500,
-        onStart: () => {
-          this.sound.play('card-se')
-        }
-      })
-    }, 4000)
+    // setTimeout(() => {
+    this.tweens.add({
+      targets: newLayoutImage,
+      x: xPos,
+      y: yPos,
+      duration: 250,
+      ease: 'Power2',
+      delay: 500,
+      onStart: () => {
+        this.sound.play('card-se')
+      }
+    })
+    // }, 4000)
 
     setTimeout(() => {
       this.add.tween({
@@ -298,8 +291,8 @@ export class SpeedScene extends BaseScene {
         duration: 500,
         delay: 500,
         onComplete: () => {
+          this.#piledLayoutCardsImages.push(newLayoutImage!)
           newLayoutImage!.setTexture(`${card.rank}${card.suit}`)
-          console.log(newLayoutImage.texture.key)
           this.#layoutCardsImages.push(newLayoutImage!)
           this.add.tween({
             targets: newLayoutImage,
@@ -311,7 +304,7 @@ export class SpeedScene extends BaseScene {
         }
       })
       this.sound.play('card-flip-se')
-    }, 5000)
+    }, 1000)
   }
 
   onCardDrag(cardImage: Image, i: number) {
@@ -354,12 +347,15 @@ export class SpeedScene extends BaseScene {
             : this.#layoutCardsImages[1]
         const layoutIndex = this.#layoutCardsImages.indexOf(layout)
         this.submitCard(this.user, cardImage, layout, i, layoutIndex)
-
-        // reset the timeout for the previous prompt to dealer
-
         // this.promptDealer()
       } else {
         this.toPrevPosition(cardImage, prevX, prevY)
+      }
+
+      if (this.user!.hand.length <= 0) {
+        setTimeout(() => {
+          this.finalResults()
+        }, 3000)
       }
     })
   }
@@ -380,12 +376,6 @@ export class SpeedScene extends BaseScene {
   }
 
   canSubmit(player: SpeedPlayer | null, handImages: Image[]): boolean {
-    // return handImages.some((cardImage: Image) => {
-    //   return this.#layoutCardsImages.some((layoutImage: Image) => {
-    //     return this.rankIsNextToLayout(cardImage, layoutImage)
-    //   })
-    // })
-
     for (let handImage of handImages) {
       for (let layoutImage of this.#layoutCardsImages) {
         if (this.rankIsNextToLayout(handImage, layoutImage)) return true
@@ -395,32 +385,55 @@ export class SpeedScene extends BaseScene {
   }
 
   promptDealer() {
+    if (this.dealer!.hand!.length === 0 || this.user!.hand!.length === 0) {
+      setTimeout(() => {
+        this.finalResults()
+      }, 3000)
+      return
+    }
+
     setTimeout(() => {
       if (this.canSubmit(this.dealer, this.#dealerHandImages)) {
         this.submitCard(this.dealer)
       } else if (!this.canSubmit(this.user, this.#userHandsImages)) {
-        this.#layoutCardsImages.shift()
-        this.#layoutCardsImages.shift()
-        this.setLayoutCardImage(
-          this.dealer!,
-          this.dealer!.dividedDeck.shift()!,
-          null!,
-          0
-        )
-        this.setLayoutCardImage(
-          this.user!,
-          this.user!.dividedDeck.shift()!,
-          null!,
-          1
-        )
-        console.log(this.#layoutCardsImages[0])
-        console.log(this.#layoutCardsImages[1])
+        this.#layoutCardsImages = []
+        if (this.user?.dividedDeck.length! > 0) {
+          this.setLayoutCardImage(
+            this.dealer!,
+            this.dealer!.dividedDeck.shift()!,
+            null!,
+            0
+          )
+        } else {
+          this.setLayoutCardImage(
+            this.dealer!,
+            this.dealer!.hand.shift()!,
+            this.#dealerHandImages[0]!,
+            0
+          )
+        }
+
+        if (this.user?.dividedDeck.length! > 0) {
+          this.setLayoutCardImage(
+            this.user!,
+            this.user!.dividedDeck.shift()!,
+            null!,
+            1
+          )
+        } else {
+          this.setLayoutCardImage(
+            this.user!,
+            this.user!.hand.shift()!,
+            this.#userHandsImages[0]!,
+            1
+          )
+        }
       }
-      // else return
-    }, 3000)
+    }, 6000)
+
     setTimeout(() => {
       this.promptDealer()
-    }, 10000)
+    }, 7000)
   }
 
   getRank(cardImage: Image): number {
@@ -469,8 +482,11 @@ export class SpeedScene extends BaseScene {
     if (player!.hand.length === 0) return
 
     if (player!.name === 'Dealer') {
-      return this.#dealerHandImages.some((handImage: Image, i: number) => {
-        return this.#layoutCardsImages.some((layoutImage: Image, j: number) => {
+      for (let i = 0; i < this.#dealerHandImages.length; i++) {
+        for (let j = 0; j < this.#layoutCardsImages.length; j++) {
+          const handImage = this.#dealerHandImages[i]
+          const layoutImage = this.#layoutCardsImages[j]
+
           if (this.rankIsNextToLayout(handImage, layoutImage)) {
             this.children.bringToTop(handImage)
 
@@ -505,10 +521,10 @@ export class SpeedScene extends BaseScene {
             this.drawCardImageFromDeck(player!, i)
 
             // this.promptDealer()
-            return true
           }
-        })
-      })
+        }
+      }
+      return
     }
 
     handIndex = !handIndex!
@@ -539,8 +555,9 @@ export class SpeedScene extends BaseScene {
     // if (this.table!.canSubmit(player)) return
     if (player.dividedDeck.length === 0) return
 
-    // -1になることがある
+    // インデックスが-1になることがある
     console.log('draw card index: ' + i)
+    i = i === -1 ? 0 : i
 
     const card = player.dividedDeck.shift()!
     const deckImage =
@@ -608,15 +625,36 @@ export class SpeedScene extends BaseScene {
     this.#userCardsText?.destroy()
     this.#dealerCardsText?.destroy()
 
-    this.#userHandsImages.forEach((card: Image) => card.destroy())
-    this.#dealerHandImages.forEach((card: Image) => card.destroy())
+    // this.#userHandsImages.forEach((card: Image) => card.destroy())
+    // this.#dealerHandImages.forEach((card: Image) => card.destroy())
+    // this.#piledLayoutCardsImages.forEach((card: Image) => card.destroy())
+
+    const resultText = this.add.text(400, 100, '', {
+      fontSize: '30px',
+      color: '#ffffff',
+      fontFamily: 'pixel'
+    })
+
+    if (this.#userHandsImages.length === 0) {
+      resultText.setText(
+        `You Win!\nディーラートノ差: ${this.dealer!.hand.length}マイ`
+      )
+      this.sound.play('win-se')
+    } else if (this.#dealerHandImages.length === 0) {
+      resultText.setText(
+        `You Lose...\nディーラートノ差: ${this.dealer!.hand.length}マイ`
+      )
+      this.sound.play('lose-se')
+    }
+
+    // clearTimeout()
 
     this.againButton()
     this.backButton()
   }
 
   againButton() {
-    const againButton = new Button(
+    return new Button(
       this,
       500,
       500,
@@ -624,20 +662,17 @@ export class SpeedScene extends BaseScene {
       'orange-button',
       'select-se',
       () => {
-        this.table = new SpeedTable(
-          'blackjack',
-          this.user!.name,
-          this.difficulty
-        )
-        this.user = this.table.user
-        this.dealer = this.table.dealer
-        this.create({ table: this.table })
+        const root = document.getElementById('app')
+        root!.innerHTML = ''
+        this.table = new SpeedTable('speed', this.user!.name, this.difficulty)
+
+        SpeedController.startGame(this.table!)
       }
     )
   }
 
   backButton() {
-    const backButton = new Button(
+    return new Button(
       this,
       500,
       600,
@@ -647,7 +682,10 @@ export class SpeedScene extends BaseScene {
       () => {
         const root = document.getElementById('app')
         root!.innerHTML = ''
-        Controller.renderModeSelectPage(['blackjack', 'war'], 'player')
+        Controller.renderModeSelectPage(
+          ['blackjack', 'war', 'poker', 'speed'],
+          this.user!.name
+        )
       }
     )
   }
