@@ -3,6 +3,7 @@ import BlackjackTable from '../model/blackjack/blackjackTable'
 import WarTable from '../model/war/warTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
+import { ModeDetail } from '../view/modeDetail'
 import { BlackjackController } from './blackjackController'
 import { WarController } from './warController'
 
@@ -31,80 +32,136 @@ export class Controller {
   モード選択ページを描画する
   */
   static renderModeSelectPage(modeList: string[], username?: string): void {
-    console.log(username)
-    ModeSelectView.create()
+    // ModeSelectView.create(modeList)
+    ModeSelectView.render(modeList, username)
 
-    const backButton = document.querySelector('.back-button')
+    const backButton = document.getElementById('backButton')
     backButton!.addEventListener('click', () => {
       Config.displayNone()
       this.renderInitialPage()
     })
-    // add event listeners to buttons
     for (let mode of modeList) {
-      const tutoButton = document.querySelector(`.${mode}-tuto-button`)
-      tutoButton!.addEventListener('click', () => {
-        // clear and render the tutorial page
-        switch (mode) {
-          case 'blackjack':
-            // BlackjackView.renderTutorial()
-            break
-          case 'war':
-            // WarView.renderTutorial()
-            break
-        }
-      })
-      const playButton = document.querySelector(`.${mode}-play-button`)
-      // get value from pull down menus
-      const difficultySelector = document.querySelector(
-        '.blackjack-difficulty'
-      ) as HTMLSelectElement
-      const roundsSelector = document.querySelector(
-        '.blackjack-rounds'
-      ) as HTMLSelectElement
-
-      let difficulty = difficultySelector.value
-      let maxRounds = parseInt(roundsSelector.value)
-      // change difficulty when difficultySelector is changed
-      difficultySelector.addEventListener('change', () => {
-        difficulty = difficultySelector.value
-        console.log(difficulty)
-      })
-      // change maxRounds when roundsSelector is changed
-      roundsSelector.addEventListener('change', () => {
-        maxRounds = parseInt(roundsSelector.value)
-        console.log(maxRounds)
-      })
-
-      console.log(difficultySelector.value)
+      const playButton = document.getElementById(`${mode}`)
       playButton!.addEventListener('click', () => {
         switch (mode) {
           case 'blackjack':
             Config.displayNone()
-            // back buttonだけ残す
-            const backButton = ModeSelectView.backButton()
-            backButton!.addEventListener('click', () => {
-              Config.displayNone()
-              this.renderModeSelectPage(['blackjack', 'war'])
-            })
-
-            // render game scene
-            const table = new BlackjackTable(
-              'blackjack',
-              username!,
-              difficulty,
-              maxRounds
-            )
-            BlackjackController.startGame(table)
+            this.renderGamePage(mode, username)
             break
           case 'war':
             Config.displayNone()
-            // render game scene
-            const tableWar = new WarTable('war')
-            WarController.startGame(tableWar)
-            // WarController.renderInitialPage()
+            this.renderGamePage(mode, username)
             break
         }
       })
     }
+  }
+
+  static renderGamePage(mode: string, username?: string): void {
+    Config.displayNone()
+    ModeDetail.render(mode, username!)
+
+    const difficultySelector = document.getElementById(
+      'difficulty'
+    ) as HTMLSelectElement
+
+    const roundsSelector = document.getElementById(
+      'rounds'
+    ) as HTMLSelectElement
+
+    let difficulty = difficultySelector.value
+    let maxRounds = parseInt(roundsSelector.value)
+
+    difficultySelector.addEventListener('change', () => {
+      difficulty = difficultySelector.value
+      console.log(difficulty)
+    })
+
+    roundsSelector.addEventListener('change', () => {
+      maxRounds = parseInt(roundsSelector.value)
+      console.log(maxRounds)
+    })
+
+    document.getElementById('backButton')!.addEventListener('click', () => {
+      Config.displayNone()
+      this.renderModeSelectPage(['blackjack', 'war'], username)
+    })
+
+    document.getElementById('play-tab')!.addEventListener('click', () => {
+      document
+        .getElementById('play-tab')!
+        .classList.add(
+          'before:absolute',
+          'before:bottom-[-1px]',
+          'before:w-full',
+          'before:bg-[#00C495]',
+          'before:h-[1px]',
+          'opacity-100'
+        )
+      document
+        .getElementById('detail-tab')!
+        .classList.remove(
+          'before:absolute',
+          'before:bottom-[-1px]',
+          'before:w-full',
+          'before:bg-[#00C495]',
+          'before:h-[1px]',
+          'opacity-100'
+        )
+      document.getElementById('play-tab')!.classList.remove('opacity-70')
+      document.getElementById('detail-tab')!.classList.add('opacity-70')
+      document.getElementById('play-view')!.classList.remove('hidden')
+      document.getElementById('play-view')!.classList.add('block')
+      document.getElementById('detail-view')!.classList.remove('block')
+      document.getElementById('detail-view')!.classList.add('hidden')
+    })
+
+    document.getElementById('detail-tab')!.addEventListener('click', () => {
+      document
+        .getElementById('play-tab')!
+        .classList.remove(
+          'before:absolute',
+          'before:bottom-[-1px]',
+          'before:w-full',
+          'before:bg-[#00C495]',
+          'before:h-[1px]',
+          'opacity-100'
+        )
+      document.getElementById('play-tab')!.classList.add('opacity-70')
+      document
+        .getElementById('detail-tab')!
+        .classList.add(
+          'before:absolute',
+          'before:bottom-[-1px]',
+          'before:w-full',
+          'before:bg-[#00C495]',
+          'before:h-[1px]',
+          'opacity-100'
+        )
+      document.getElementById('detail-tab')!.classList.remove('opacity-70')
+      document.getElementById('play-view')!.classList.remove('block')
+      document.getElementById('play-view')!.classList.add('hidden')
+      document.getElementById('detail-view')!.classList.remove('hidden')
+      document.getElementById('detail-view')!.classList.add('block')
+    })
+
+    document.getElementById('playButton')!.addEventListener('click', () => {
+      switch (mode) {
+        case 'blackjack':
+          Config.displayNone()
+          const table = new BlackjackTable(
+            'blackjack',
+            username!,
+            difficulty,
+            maxRounds
+          )
+          BlackjackController.startGame(table)
+          break
+        case 'war':
+          Config.displayNone()
+          WarController.startGame(new WarTable('war'))
+          break
+      }
+    })
   }
 }

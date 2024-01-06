@@ -1,89 +1,60 @@
 export class ModeSelectView {
-  constructor() {
-    console.log('ModeSelectView constructor')
-  }
+  // Breakpoint prefix	Minimum width	CSS
+  // sm	640px	@media (min-width: 640px) { ... }
+  // md	768px	@media (min-width: 768px) { ... }
+  // lg	1024px	@media (min-width: 1024px) { ... }
+  // xl	1280px	@media (min-width: 1280px) { ... }
+  // 2xl	1536px	@media (min-width: 1536px) { ... }
 
-  /*
-    create(): void
-    モード選択ページの要素を生成する
-  */
-  static create() {
+  static render(modeList: string[], name?: string) {
     const root = document.getElementById('app')
+    const backButton = this.backButtonElement()
+    const cards = this.cardsElement(modeList)
 
-    // 左上に戻るボタン
-    const backButton = document.createElement('button')
-    backButton.innerText = 'Back'
-    backButton.classList.add('back-button')
-
-    const container = document.createElement('div')
-    const title = document.createElement('h1')
-    title.innerText = 'Select a game mode'
-
-    const blackjackModal = this.modal('Blackjack', 'blackjack')
-    const warModal = this.modal('War', 'war')
-
-    container.append(backButton, title, blackjackModal, warModal)
-    root?.append(container)
+    root!.innerHTML = `
+    <div id="header" class="pt-6 px-6">
+      <div class="flex justify-between items-center">
+        ${backButton}
+        <span class="text-sm opacity-70">${name}</span>
+      </div>
+      <div class="mt-10">
+        <h1 class="text-lg font-bold">Select a game mode</h1>
+      </div>
+    </div>
+    <div id="cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 px-6">
+      ${cards}
+    </div>
+    `
   }
 
-  /*
-    modal(title: string, gameType: string): HTMLDivElement
-    モード、難易度、ラウンド数選択のモーダルを生成する
-  */
-  static modal(title: string, gameType: string): HTMLDivElement {
-    const modal = document.createElement('div')
-    modal.classList.add('modal')
-    modal.id = `${gameType}-modal`
-
-    const modalContent = document.createElement('div')
-    modalContent.classList.add('modal-content')
-
-    const modalTitle = document.createElement('h2')
-    modalTitle.innerText = title
-
-    const tutoButton = document.createElement('button')
-    tutoButton.innerText = 'Tutorial'
-    tutoButton.classList.add(`${gameType}-tuto-button`)
-
-    // pull dowm menus for difficulty and rounds selection
-    const difficulties = document.createElement('select')
-    difficulties.id = `${gameType}-difficulty`
-    difficulties.classList.add(`${gameType}-difficulty`)
-    difficulties.innerHTML = `
-      <option value="easy">Easy</option>
-      <option value="normal">Normal</option>
-      <option value="hard">Hard</option>
+  static backButtonElement(): string {
+    const element = `
+    <div id="backButton" class="flex items-center cursor-pointer">
+      <img src="assets/ui/arrow.svg" width="10" height="15" />
+      <span class="ml-1 text-sm text-[#00C495]">スタート</span>
+    </div>
     `
-
-    const rounds = document.createElement('select')
-    rounds.id = `${gameType}-rounds`
-    rounds.classList.add(`${gameType}-rounds`)
-    rounds.innerHTML = `
-      <option value="5">5 rounds</option>
-      <option value="7">7 rounds</option>
-    `
-
-    const playButton = document.createElement('button')
-    playButton.innerText = 'Play'
-    playButton.classList.add(`${gameType}-play-button`)
-
-    modalContent.append(
-      modalTitle,
-      difficulties,
-      rounds,
-      playButton,
-      tutoButton
-    )
-    modal.append(modalContent)
-
-    return modal
+    return element
   }
 
-  static backButton() {
-    const backButton = document.createElement('button')
-    backButton.innerText = 'Back'
-    backButton.classList.add('back-button')
+  static cardsElement(modeList: string[]): string {
+    let element = ''
 
-    return backButton
+    modeList.map((mode) => {
+      element += `
+      <div id="${mode}" class="relative flex w-full rounded-lg bg-[#15191E] overflow-hidden cursor-pointer before:absolute before:w-full before:h-full before:bg-black before:bg-opacity-50 before:hover:bg-opacity-60">
+        <img src="/assets/ui/war-back.png" width="1080" height="720" />
+        <div class="absolute bottom-0 left-0 py-6 px-4">
+          <h2 class="text-md font-bold">${mode.replace(
+            mode[0],
+            mode[0].toUpperCase()
+          )}</h2>
+          <p class="mt-2 text-sm opacity-80">To ensure you can easily update your
+          project after deploying</p>
+        </div>
+      </div>
+      `
+    })
+    return element
   }
 }
