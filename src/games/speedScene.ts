@@ -42,8 +42,16 @@ export class SpeedScene extends BaseScene {
 
   renderScene() {
     this.dealInitialHandsAndDecks()
-    this.setLayoutCardImage(this.dealer!, this.table!.layoutCards[0], null!, 0)
-    this.setLayoutCardImage(this.user!, this.table!.layoutCards[1], null!, 1)
+    setTimeout(() => {
+      this.setLayoutCardImage(
+        this.dealer!,
+        this.table!.layoutCards[0],
+        null!,
+        0
+      )
+      this.setLayoutCardImage(this.user!, this.table!.layoutCards[1], null!, 1)
+    }, 4000)
+
     setTimeout(() => {
       this.countDown()
     }, 6000)
@@ -52,8 +60,10 @@ export class SpeedScene extends BaseScene {
       this.userDeckText()
       this.dealerDeckText()
 
+      // dealer's action
       this.promptDealer()
 
+      // user's action
       this.#userHandsImages.forEach((cardImage: Image, i: number) => {
         this.onCardDrag(cardImage, i)
       })
@@ -122,14 +132,14 @@ export class SpeedScene extends BaseScene {
   }
 
   dealInitialHandsAndDecks() {
+    // dealer's cards
     const dealerDeckImage = this.add.image(300, 150, 'back')
     this.#dealerDeckImage = dealerDeckImage
-    // this.dealerDeckText()
+
     const dealerHands = this.table!.dealer.hand
     for (let i = 0; i < dealerHands.length; i++) {
       const card = dealerHands[i]
 
-      // move card from the top center to the dealer's hand with sound
       const cardImage = this.add.image(
         dealerDeckImage.x,
         dealerDeckImage.y,
@@ -171,13 +181,13 @@ export class SpeedScene extends BaseScene {
       this.#dealerHandImages.push(cardImage)
     }
 
+    // user's cards
     const userDeckImage = this.add.image(800, 450, 'back')
     this.#userDeckImage = userDeckImage
-    // this.userDeckText()
+
     const userHands = this.user!.hand
     for (let i = 0; i < userHands.length; i++) {
       const card = userHands[i]
-
       const cardImage = this.add.image(userDeckImage.x, userDeckImage.y, 'back')
 
       setTimeout(() => {
@@ -394,7 +404,9 @@ export class SpeedScene extends BaseScene {
 
     setTimeout(() => {
       if (this.canSubmit(this.dealer, this.#dealerHandImages)) {
-        this.submitCard(this.dealer)
+        setTimeout(() => {
+          this.submitCard(this.dealer)
+        }, 3000)
       } else if (!this.canSubmit(this.user, this.#userHandsImages)) {
         this.#layoutCardsImages = []
         if (this.user?.dividedDeck.length! > 0) {
@@ -429,11 +441,11 @@ export class SpeedScene extends BaseScene {
           )
         }
       }
-    }, 6000)
+    }, 3000)
 
     setTimeout(() => {
       this.promptDealer()
-    }, 7000)
+    }, 4000)
   }
 
   getRank(cardImage: Image): number {
@@ -519,7 +531,7 @@ export class SpeedScene extends BaseScene {
             this.dealerDeckText()
             this.setLayoutCardImage(this.user!, card, handImage, j)
             this.drawCardImageFromDeck(player!, i)
-
+            return
             // this.promptDealer()
           }
         }
