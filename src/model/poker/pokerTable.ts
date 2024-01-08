@@ -22,7 +22,7 @@ export default class pokerTable extends Table {
     bigBlind: number;
     blindCounter: number; // ブラインドベットした人数を記録(foldした場合を考慮する。(dealerIndex + 2は不可))
     pot: number;
-
+    players: pokerPlayer[];
     constructor(gameType: string, maxTurn: number) {
         super(gameType);
         this.dealer = new pokerPlayer("Dealer", "dealer", gameType);
@@ -46,11 +46,26 @@ export default class pokerTable extends Table {
     }
 
     assignPlayerHands(): void {
-        for (let player of this.players) {
-            player.hand.push(this.deck.drawCard());
-            player.hand.push(this.deck.drawCard());
-        } 
-   }
+        // for (let player of this.players) {
+        //     player.hand.push(this.deck.drawCard());
+        //     player.hand.push(this.deck.drawCard());
+        // }
+        for (let i = 0; i < this.players.length; i++) {
+            if (i == 0) {
+                this.players[i].hand.push(new Card("H", "J"));
+                this.players[i].hand.push(new Card("D", "Q"));
+            } else if (i == 1) {
+                this.players[i].hand.push(new Card("C", "4"));
+                this.players[i].hand.push(new Card("H", "7"));
+            } else if (i == 2) {
+                this.players[i].hand.push(new Card("H", "4"));
+                this.players[i].hand.push(new Card("S", "7"));
+            } else {
+                this.players[i].hand.push(new Card("D", "10"));
+                this.players[i].hand.push(new Card("S", "K"));
+            }
+        }
+    }
 
     sortPlayerScore(): pokerPlayer[] {
         let sortedPlayers: pokerPlayer[] = this.players.sort((a, b) => {
@@ -349,7 +364,7 @@ export default class pokerTable extends Table {
                 this.dealer.hand.push(this.deck.drawCard());
                 this.dealer.hand.push(this.deck.drawCard());
                 this.dealer.hand.push(this.deck.drawCard());
-            }  } else if (this.turnCounter < 3) {
+            } else if (this.turnCounter < 3) {
                 this.dealer.hand.push(this.deck.drawCard());
             }
             console.log("turnCounter !!: ", this.turnCounter);
@@ -367,19 +382,26 @@ export default class pokerTable extends Table {
             this.betMoney = this.minbet;
             console.log("ディーラーのhand", this.dealer.hand);
             console.log("次のラウンドの開始person", this.getTurnPlayer().name);
-        }changePlayerStatusToBet() {
-        throw new Error("Method not implemented.");
-    }
-updatePlayerHandStatus() {
-        throw new Error("Method not implemented.");
-    }
- else {
+
+            // this.printPlayerStatus();
+        } else {
             // playerIndexCounter == betIndex : 1周してきた時
+            // bet状態じゃない or ブラインドベットじゃない => dealer.turn
+            console.log(
+                "PLAYERINDEXCOUNTER ",
+                this.playerIndexCounter,
+                "BETINDEX",
+                this.betIndex,
+                player.name,
+                player.gameStatus,
+                player.chips
+            );
             if (
                 this.onLastPlayer() &&
                 player.gameStatus != "bet" &&
                 player.gameStatus != "blind"
             ) {
+                console.log("一周してきました。ディーラーに移行");
                 this.gamePhase = "dealer turn";
                 return;
             }
@@ -479,7 +501,6 @@ updatePlayerHandStatus() {
             console.log("Pot Money", this.pot);
         }
     }
-
 
     // プレイヤーのターンを処理するメソッド.
     haveTurn(userData?: PokerActionType): void {
@@ -668,7 +689,7 @@ updatePlayerHandStatus() {
     }
 
     // ターン中のプレイヤーを取得するメソッド.
-    getTurnPlayer() {
+    getTurnPlayer(): pokerPlayer {
         return this.players[this.playerIndexCounter % this.players.length];
     }
 
