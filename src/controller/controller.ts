@@ -95,7 +95,10 @@ export class Controller {
 
     document.getElementById('backButton')!.addEventListener('click', () => {
       Config.displayNone()
-      this.renderModeSelectPage(['blackjack', 'war'], username)
+      this.renderModeSelectPage(
+        ['blackjack', 'war', 'poker', 'speed'],
+        username
+      )
     })
 
     document.getElementById('play-tab')!.addEventListener('click', () => {
@@ -170,7 +173,7 @@ export class Controller {
           break
         case 'war':
           Config.displayNone()
-          WarController.startGame(new WarTable('war'))
+          WarController.startGame(new WarTable('war', username!))
           break
         case 'poker':
           break

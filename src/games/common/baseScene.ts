@@ -2,8 +2,6 @@ import Phaser from 'phaser'
 
 export class BaseScene extends Phaser.Scene {
   create(data: any) {
-    console.log(data)
-
     const table = data.table
     this.add.image(0, 0, 'background').setOrigin(0)
     this.createGameZone()
