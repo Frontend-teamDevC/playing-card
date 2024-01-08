@@ -339,20 +339,20 @@ export class SpeedScene extends BaseScene {
       cardImage.scaleY = 1
     })
 
-    cardImage.on('dragstart', (pointer: any, dragX: number, dragY: number) => {
+    cardImage.on('dragstart', () => {
       this.sound.play('card-flip-se')
 
       // layout cardImageより前面に出す
       this.children.bringToTop(cardImage)
     })
-    cardImage.on('drag', (pointer: any, dragX: number, dragY: number) => {
+    cardImage.on('drag', (dragX: number, dragY: number) => {
       cardImage.x = dragX
       cardImage.y = dragY
       // extend and shrink repeatedly
       cardImage.scaleX = 1.2
       cardImage.scaleY = 1.2
     })
-    cardImage.on('dragend', (pointer: any, dragX: number, dragY: number) => {
+    cardImage.on('dragend', () => {
       if (this.checkValidMove(cardImage)) {
         // get the overlapped layout
         const layout =
@@ -367,15 +367,12 @@ export class SpeedScene extends BaseScene {
       }
 
       if (this.user!.hand.length <= 0) {
-        // setTimeout(() => {
         this.finalResults()
-        // }, 3000)
       }
     })
   }
 
   checkValidMove(cardImage: Image): boolean {
-    // if (!this.table.canSubmit(user) && !this.table.canSubmit(dealer)) return false
     const layout1 = this.#layoutCardsImages[0]
     const layout2 = this.#layoutCardsImages[1]
 
@@ -387,7 +384,7 @@ export class SpeedScene extends BaseScene {
     )
   }
 
-  canSubmit(player: SpeedPlayer | null, handImages: Image[]): boolean {
+  canSubmit(handImages: Image[]): boolean {
     for (let handImage of handImages) {
       for (let layoutImage of this.#layoutCardsImages) {
         if (this.rankIsNextToLayout(handImage, layoutImage)) return true
@@ -398,17 +395,11 @@ export class SpeedScene extends BaseScene {
 
   promptDealer() {
     setTimeout(() => {
-      if (this.canSubmit(this.dealer, this.#dealerHandImages)) {
+      if (this.canSubmit(this.#dealerHandImages)) {
         setTimeout(() => {
           this.submitCard(this.dealer)
         }, 2000)
-      }
-      // else if (this.canSubmit(this.user, this.#userHandsImages)) {
-      //   return
-      // }
-      else if (!this.canSubmit(this.user, this.#userHandsImages)) {
-        // else {
-        // this.#layoutCardsImages = []
+      } else if (!this.canSubmit(this.#userHandsImages)) {
         if (this.dealer!.dividedDeck.length > 0) {
           this.#layoutCardsImages = []
 
@@ -419,9 +410,7 @@ export class SpeedScene extends BaseScene {
             0
           )
         } else {
-          console.log('ディーラーよ、カードを出すのだ')
           this.submitCard(this.dealer)
-          // return
         }
 
         if (this.user!.dividedDeck.length > 0) {
@@ -434,8 +423,6 @@ export class SpeedScene extends BaseScene {
             1
           )
         } else {
-          console.log('プレイヤーよ、カードを出すのだ')
-          console.log('user first hand: ' + this.user!.hand[0])
           this.submitCard(
             this.user,
             this.#userHandsImages[0],
@@ -449,9 +436,7 @@ export class SpeedScene extends BaseScene {
     }, 2000)
 
     if (this.dealer!.hand!.length <= 0 || this.user!.hand!.length <= 0) {
-      // setTimeout(() => {
       this.finalResults()
-      // }, 500)
       return
     }
 
@@ -511,10 +496,10 @@ export class SpeedScene extends BaseScene {
           let handImage = this.#dealerHandImages[i]
           let layoutImage = this.#layoutCardsImages[j]
 
-          // ディーラーの山札がない && 出せる手札がない場合は手札０番目を場札０番目に出す
+          // Bug: ディーラーの山札がない && 出せる手札がない場合は手札０番目を場札０番目に出すようにする
           if (
             player!.dividedDeck.length <= 0 &&
-            !this.canSubmit(player, this.#dealerHandImages)
+            !this.canSubmit(this.#dealerHandImages)
           ) {
             handImage = this.#dealerHandImages[0]
             layoutImage = this.#layoutCardsImages[0]
@@ -523,7 +508,7 @@ export class SpeedScene extends BaseScene {
           if (
             this.rankIsNextToLayout(handImage, layoutImage) ||
             (player!.dividedDeck.length <= 0 &&
-              !this.canSubmit(player, this.#dealerHandImages))
+              !this.canSubmit(this.#dealerHandImages))
           ) {
             this.children.bringToTop(handImage)
 
@@ -589,11 +574,8 @@ export class SpeedScene extends BaseScene {
   }
 
   drawCardImageFromDeck(player: SpeedPlayer, i: number) {
-    // if (this.table!.canSubmit(player)) return
     if (player.dividedDeck.length === 0) return
 
-    // インデックスが-1になることがある
-    console.log('draw card index: ' + i)
     i = i === -1 ? 0 : i
 
     const card = player.dividedDeck.shift()!
@@ -661,10 +643,6 @@ export class SpeedScene extends BaseScene {
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#userCardsText?.destroy()
     this.#dealerCardsText?.destroy()
-
-    // this.#userHandsImages.forEach((card: Image) => card.destroy())
-    // this.#dealerHandImages.forEach((card: Image) => card.destroy())
-    // this.#piledLayoutCardsImages.forEach((card: Image) => card.destroy())
 
     const resultText = this.add.text(400, 50, '', {
       fontSize: '30px',

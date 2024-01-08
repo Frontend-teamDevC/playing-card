@@ -58,7 +58,7 @@ export default class SpeedTable extends Table {
     evaluateMove(player: Player, userData?: number | BlackjackActionType): void
     promptPlayer()で取得したプレイヤーの行動に応じてゲームの状態を更新する
     */
-  evaluateMove(player: Player): void {}
+  evaluateMove(_player: Player): void {}
 
   /*
     evaluateAndGetFinalResults(): string
