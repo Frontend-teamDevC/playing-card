@@ -86,7 +86,7 @@ export class PreloadScene extends Phaser.Scene {
     // BGM
 
     // SE
-    this.load.audio('coin-se', 'assets/sounds/coin-se.ogg')
+    this.load.audio('coin-se', 'assets/sounds/coin-se.mp3')
 
     this.load.audio('card-se', 'assets/sounds/card-se.mp3')
     this.load.audio('card-flip-se', 'assets/sounds/card-flip-se.mp3')
