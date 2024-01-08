@@ -345,7 +345,7 @@ export class SpeedScene extends BaseScene {
       // layout cardImageより前面に出す
       this.children.bringToTop(cardImage)
     })
-    cardImage.on('drag', (dragX: number, dragY: number) => {
+    cardImage.on('drag', (_pointer: any, dragX: number, dragY: number) => {
       cardImage.x = dragX
       cardImage.y = dragY
       // extend and shrink repeatedly
