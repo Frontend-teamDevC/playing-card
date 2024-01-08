@@ -27,12 +27,16 @@ export default class pokerTable extends Table {
         super(gameType);
         this.dealer = new pokerPlayer("Dealer", "dealer", gameType);
         this.gamePhase = "blinding";
-        this.players = [
-            new pokerPlayer("p1", "player", gameType),
-            new pokerPlayer("p2", "ai", gameType),
-            new pokerPlayer("p3", "ai", gameType),
-            new pokerPlayer("p4", "ai", gameType),
-        ];
+        // this.players = [
+        //     new pokerPlayer("p1", "player", gameType),
+        //     new pokerPlayer("p2", "ai", gameType),
+        //     new pokerPlayer("p3", "ai", gameType),
+        //     new pokerPlayer("p4", "ai", gameType),
+        // ];
+        this.players.push(new pokerPlayer("p1", "player", gameType));
+        this.players.push(new pokerPlayer("p2", "ai", gameType));
+        this.players.push(new pokerPlayer("p3", "ai", gameType));
+        this.players.push(new pokerPlayer("p4", "ai", gameType));
         this.dealerIndex = Math.floor(Math.random() * this.players.length);
         this.playerIndexCounter = this.dealerIndex + 1; // 現在ターンのプレイヤーを返す。
         this.betIndex = (this.dealerIndex + 2) % this.players.length; //　ラウンド開始時のベットスタートプレイヤー
@@ -46,24 +50,9 @@ export default class pokerTable extends Table {
     }
 
     assignPlayerHands(): void {
-        // for (let player of this.players) {
-        //     player.hand.push(this.deck.drawCard());
-        //     player.hand.push(this.deck.drawCard());
-        // }
-        for (let i = 0; i < this.players.length; i++) {
-            if (i == 0) {
-                this.players[i].hand.push(new Card("H", "J"));
-                this.players[i].hand.push(new Card("D", "Q"));
-            } else if (i == 1) {
-                this.players[i].hand.push(new Card("C", "4"));
-                this.players[i].hand.push(new Card("H", "7"));
-            } else if (i == 2) {
-                this.players[i].hand.push(new Card("H", "4"));
-                this.players[i].hand.push(new Card("S", "7"));
-            } else {
-                this.players[i].hand.push(new Card("D", "10"));
-                this.players[i].hand.push(new Card("S", "K"));
-            }
+        for (let player of this.players) {
+            player.hand.push(this.deck.drawCard());
+            player.hand.push(this.deck.drawCard());
         }
     }
 
@@ -99,7 +88,6 @@ export default class pokerTable extends Table {
 
     // ラウンド結果を評価し、結果を文字列として返すメソッド.
     evaluateAndGetRoundResults(): string {
-        let winners: pokerPlayer[] = [];
         let roundLog = "";
         const hashMap: Map<PokerHandType, number> = new Map<
             PokerHandType,
@@ -510,7 +498,8 @@ export default class pokerTable extends Table {
             this.resultsLog.push(this.evaluateAndGetRoundResults());
             this.clearPlayerHandsAndBets();
             this.roundCounter++;
-            this.deck.resetDeck();
+            this.deck.reset();
+            this.deck.shuffle();
             this.moveToNextDealer();
             this.gamePhase = "blinding";
             console.log("ラウンド終了次はblinding", this.gamePhase);
@@ -689,7 +678,7 @@ export default class pokerTable extends Table {
     }
 
     // ターン中のプレイヤーを取得するメソッド.
-    getTurnPlayer(): pokerPlayer {
+    getTurnPlayer(): Player {
         return this.players[this.playerIndexCounter % this.players.length];
     }
 

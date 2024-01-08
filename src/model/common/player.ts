@@ -40,5 +40,5 @@ export default abstract class Player {
   getHandScore(): number
   手札の合計スコアを計算して返す
   */
-  abstract getHandScore(): number
+  abstract getHandScore(player? : Player): number | any
 }
