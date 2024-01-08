@@ -83,10 +83,9 @@ export class SpeedScene extends BaseScene {
       if (count === 0) {
         clearInterval(countDownInterval)
         countDownText.destroy()
-        // start text for 1 second
         const startText = this.add.text(400, 300, 'Start!', {
           fontSize: '100px',
-          color: '#ffffff',
+          color: 'orange',
           fontFamily: 'pixel'
         })
         setTimeout(() => {
@@ -239,6 +238,8 @@ export class SpeedScene extends BaseScene {
     const deckImage =
       player.name === 'Dealer' ? this.#dealerDeckImage : this.#userDeckImage
 
+    if (deckImage === null) return
+
     if (player.dividedDeck.length <= 0) {
       if (player.name === 'Dealer' && this.#dealerDeckImage !== null) {
         this.#dealerDeckImage?.destroy()
@@ -273,6 +274,8 @@ export class SpeedScene extends BaseScene {
         ease: 'Power2',
         delay: 500,
         onStart: () => {
+          this.userDeckText()
+          this.dealerDeckText()
           this.sound.play('card-se')
         }
       })
@@ -288,6 +291,8 @@ export class SpeedScene extends BaseScene {
       ease: 'Power2',
       delay: 500,
       onStart: () => {
+        this.userDeckText()
+        this.dealerDeckText()
         this.sound.play('card-se')
       }
     })
@@ -357,15 +362,14 @@ export class SpeedScene extends BaseScene {
             : this.#layoutCardsImages[1]
         const layoutIndex = this.#layoutCardsImages.indexOf(layout)
         this.submitCard(this.user, cardImage, layout, i, layoutIndex)
-        // this.promptDealer()
       } else {
         this.toPrevPosition(cardImage, prevX, prevY)
       }
 
       if (this.user!.hand.length <= 0) {
-        setTimeout(() => {
-          this.finalResults()
-        }, 3000)
+        // setTimeout(() => {
+        this.finalResults()
+        // }, 3000)
       }
     })
   }
@@ -374,8 +378,6 @@ export class SpeedScene extends BaseScene {
     // if (!this.table.canSubmit(user) && !this.table.canSubmit(dealer)) return false
     const layout1 = this.#layoutCardsImages[0]
     const layout2 = this.#layoutCardsImages[1]
-
-    // when dragging the card to overrap the layout's position, if the card is valid, return true
 
     return (
       (this.rankIsNextToLayout(cardImage, layout1) &&
@@ -395,21 +397,21 @@ export class SpeedScene extends BaseScene {
   }
 
   promptDealer() {
-    if (this.dealer!.hand!.length === 0 || this.user!.hand!.length === 0) {
-      setTimeout(() => {
-        this.finalResults()
-      }, 3000)
-      return
-    }
-
     setTimeout(() => {
       if (this.canSubmit(this.dealer, this.#dealerHandImages)) {
         setTimeout(() => {
           this.submitCard(this.dealer)
-        }, 3000)
-      } else if (!this.canSubmit(this.user, this.#userHandsImages)) {
-        this.#layoutCardsImages = []
-        if (this.user?.dividedDeck.length! > 0) {
+        }, 2000)
+      }
+      // else if (this.canSubmit(this.user, this.#userHandsImages)) {
+      //   return
+      // }
+      else if (!this.canSubmit(this.user, this.#userHandsImages)) {
+        // else {
+        // this.#layoutCardsImages = []
+        if (this.dealer!.dividedDeck.length > 0) {
+          this.#layoutCardsImages = []
+
           this.setLayoutCardImage(
             this.dealer!,
             this.dealer!.dividedDeck.shift()!,
@@ -417,15 +419,14 @@ export class SpeedScene extends BaseScene {
             0
           )
         } else {
-          this.setLayoutCardImage(
-            this.dealer!,
-            this.dealer!.hand.shift()!,
-            this.#dealerHandImages[0]!,
-            0
-          )
+          console.log('ディーラーよ、カードを出すのだ')
+          this.submitCard(this.dealer)
+          // return
         }
 
-        if (this.user?.dividedDeck.length! > 0) {
+        if (this.user!.dividedDeck.length > 0) {
+          this.#layoutCardsImages = []
+
           this.setLayoutCardImage(
             this.user!,
             this.user!.dividedDeck.shift()!,
@@ -433,19 +434,30 @@ export class SpeedScene extends BaseScene {
             1
           )
         } else {
-          this.setLayoutCardImage(
-            this.user!,
-            this.user!.hand.shift()!,
-            this.#userHandsImages[0]!,
+          console.log('プレイヤーよ、カードを出すのだ')
+          console.log('user first hand: ' + this.user!.hand[0])
+          this.submitCard(
+            this.user,
+            this.#userHandsImages[0],
+            this.#layoutCardsImages[1],
+            0,
             1
           )
+          // return
         }
       }
-    }, 3000)
+    }, 2000)
+
+    if (this.dealer!.hand!.length <= 0 || this.user!.hand!.length <= 0) {
+      // setTimeout(() => {
+      this.finalResults()
+      // }, 500)
+      return
+    }
 
     setTimeout(() => {
       this.promptDealer()
-    }, 4000)
+    }, 3000)
   }
 
   getRank(cardImage: Image): number {
@@ -491,15 +503,28 @@ export class SpeedScene extends BaseScene {
     handIndex?: number,
     layoutIndex?: number
   ) {
-    if (player!.hand.length === 0) return
+    if (player!.hand.length <= 0) return
 
     if (player!.name === 'Dealer') {
       for (let i = 0; i < this.#dealerHandImages.length; i++) {
         for (let j = 0; j < this.#layoutCardsImages.length; j++) {
-          const handImage = this.#dealerHandImages[i]
-          const layoutImage = this.#layoutCardsImages[j]
+          let handImage = this.#dealerHandImages[i]
+          let layoutImage = this.#layoutCardsImages[j]
 
-          if (this.rankIsNextToLayout(handImage, layoutImage)) {
+          // ディーラーの山札がない && 出せる手札がない場合は手札０番目を場札０番目に出す
+          if (
+            player!.dividedDeck.length <= 0 &&
+            !this.canSubmit(player, this.#dealerHandImages)
+          ) {
+            handImage = this.#dealerHandImages[0]
+            layoutImage = this.#layoutCardsImages[0]
+          }
+
+          if (
+            this.rankIsNextToLayout(handImage, layoutImage) ||
+            (player!.dividedDeck.length <= 0 &&
+              !this.canSubmit(player, this.#dealerHandImages))
+          ) {
             this.children.bringToTop(handImage)
 
             this.add.tween({
@@ -513,26 +538,27 @@ export class SpeedScene extends BaseScene {
                 this.sound.play('card-se')
               }
             })
+
             const card = player!.hand[i]
             const cardIndex = player!.hand.indexOf(card)
 
             player!.hand.splice(cardIndex, 1)
-            // this.table!.layoutCards.splice(layoutIndex, 1, card)
             this.#dealerHandImages.splice(i, 1)
-            // this.#layoutCardsImages.splice(j, 1, cardImage)
+
             handImage!.scaleX = 1
             handImage!.scaleY = 1
             handImage!.disableInteractive()
-            // card's position is set to the layout's position
             handImage!.x = layoutImage!.x
 
-            this.#userHandsImages.splice(i, 1)
+            // this.#userHandsImages.splice(i, 1)
             this.userDeckText()
             this.dealerDeckText()
             this.setLayoutCardImage(this.user!, card, handImage, j)
+
+            if (player!.dividedDeck.length <= 0) return
+
             this.drawCardImageFromDeck(player!, i)
             return
-            // this.promptDealer()
           }
         }
       }
@@ -547,19 +573,18 @@ export class SpeedScene extends BaseScene {
     const cardIndex = player!.hand.indexOf(card)
 
     player!.hand.splice(cardIndex, 1)
-    // this.table!.layoutCards.splice(layoutIndex, 1, card)
     this.#userHandsImages.splice(handIndex!, 1)
-    // this.#layoutCardsImages.splice(layoutIndex, 1, cardImage!)
 
     cardImage!.scaleX = 1
     cardImage!.scaleY = 1
     cardImage!.disableInteractive()
-    // card's position is set to the layout's position
     cardImage!.x = layoutImage!.x
 
     this.userDeckText()
     this.dealerDeckText()
     this.setLayoutCardImage(this.user!, card, cardImage!, layoutIndex!)
+    if (player!.dividedDeck.length <= 0) return
+
     this.drawCardImageFromDeck(player!, handIndex!)
   }
 
@@ -641,25 +666,27 @@ export class SpeedScene extends BaseScene {
     // this.#dealerHandImages.forEach((card: Image) => card.destroy())
     // this.#piledLayoutCardsImages.forEach((card: Image) => card.destroy())
 
-    const resultText = this.add.text(400, 100, '', {
+    const resultText = this.add.text(400, 50, '', {
       fontSize: '30px',
-      color: '#ffffff',
+      color: 'orange',
       fontFamily: 'pixel'
     })
 
-    if (this.#userHandsImages.length === 0) {
+    if (this.user!.hand.length <= 0) {
       resultText.setText(
-        `You Win!\nディーラートノ差: ${this.dealer!.hand.length}マイ`
+        `🏆You Win!\nディーラートノ差: ${
+          this.dealer!.hand.length + this.dealer!.dividedDeck.length
+        }マイ`
       )
       this.sound.play('win-se')
-    } else if (this.#dealerHandImages.length === 0) {
+    } else if (this.dealer!.hand.length <= 0) {
       resultText.setText(
-        `You Lose...\nディーラートノ差: ${this.dealer!.hand.length}マイ`
+        `You Lose...\nディーラートノ差: ${
+          this.dealer!.hand.length + this.dealer!.dividedDeck.length
+        }マイ`
       )
       this.sound.play('lose-se')
     }
-
-    // clearTimeout()
 
     this.againButton()
     this.backButton()
