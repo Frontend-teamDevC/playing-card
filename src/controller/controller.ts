@@ -1,11 +1,13 @@
 import { Config } from '../config/pageConfig'
 import BlackjackTable from '../model/blackjack/blackjackTable'
 import WarTable from '../model/war/warTable'
+import PokerTable from '../model/poker/pokerTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
 import { ModeDetail } from '../view/modeDetail'
 import { BlackjackController } from './blackjackController'
 import { WarController } from './warController'
+import { PokerController } from './pokerController'
 
 export class Controller {
   /*
@@ -22,7 +24,7 @@ export class Controller {
       ) as HTMLInputElement
       if (nameInput.value) {
         Config.displayNone()
-        this.renderModeSelectPage(['blackjack', 'war'], nameInput.value)
+        this.renderModeSelectPage(['blackjack', 'war', 'poker'], nameInput.value)
       }
     })
   }
@@ -52,6 +54,10 @@ export class Controller {
             Config.displayNone()
             this.renderGamePage(mode, username)
             break
+            case 'poker':
+              Config.displayNone()
+              this.renderGamePage(mode, username)
+              break
         }
       })
     }
@@ -160,6 +166,13 @@ export class Controller {
         case 'war':
           Config.displayNone()
           WarController.startGame(new WarTable('war'))
+          break
+        case "poker":
+          Config.displayNone();
+          const pokerTable = new PokerTable(
+            'poker', maxRounds
+          )
+          PokerController.startGame(pokerTable)
           break
       }
     })
