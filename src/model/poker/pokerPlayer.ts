@@ -173,7 +173,7 @@ export default class pokerPlayer extends Player {
         } else if (this.isStraightFlush()) {
             this.playerHandStatus = "straight flush";
             return "straight flush";
-        } else if (this.isFourCard(pairsOfFour)) {
+        } else if (this.isFourCard()) {
             this.pairsOfFourList = parisOfFourList;
             this.playerHandStatus = "four card";
             return "four card";
@@ -224,7 +224,7 @@ export default class pokerPlayer extends Player {
         return this.isStraight() && this.isFlush();
     }
 
-    isFourCard(pairsOfFour: number): boolean {
+    isFourCard(): boolean {
         return this.maxValue == 4;
     }
 

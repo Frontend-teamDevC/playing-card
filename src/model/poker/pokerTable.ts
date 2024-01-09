@@ -22,7 +22,7 @@ export default class PokerTable extends Table {
     bigBlind: number;
     blindCounter: number; // ブラインドベットした人数を記録(foldした場合を考慮する。(dealerIndex + 2は不可))
     pot: number;
-    // players: pokerPlayer[];
+    players: pokerPlayer[];
     constructor(gameType: string, maxTurn: number) {
         super(gameType);
         this.dealer = new pokerPlayer("Dealer", "dealer", gameType);
