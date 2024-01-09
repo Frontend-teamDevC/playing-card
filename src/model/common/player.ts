@@ -3,6 +3,7 @@ import {
   BlackjackStatusType
 } from '../../config/blackjackConfig'
 import { PokerActionType, PokerStatusType } from '../../config/pokerConfig'
+import { SpeedStatusType } from '../../config/speedConfig'
 import Card from './card'
 import GameDecision from './gameDecision'
 
@@ -10,7 +11,7 @@ export default abstract class Player {
   name: string
   type: string
   gameType: string
-  gameStatus: BlackjackStatusType | PokerStatusType = ''
+  gameStatus: BlackjackStatusType | PokerStatusType | SpeedStatusType = ''
   chips: number
   bet: number = 0
   winAmount: number = 0

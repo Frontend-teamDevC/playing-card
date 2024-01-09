@@ -3,15 +3,17 @@ import Deck from './warDeck'
 import Player from './warPlayer'
 
 export default class WarTable {
+  user: Player
   gameType: string
   gamePhase: string
   players: Player[] = []
   temp: Card[] = []
 
-  constructor(gameType: string) {
+  constructor(gameType: string, name: string) {
+    this.user = new Player(name, 'player')
     this.gameType = gameType
     this.gamePhase = 'initialize'
-    this.players.push(new Player('dealer'), new Player('player'))
+    this.players.push(new Player('DEALER', 'dealer'), this.user)
 
     this.assignDeck()
     this.assignHand()

@@ -1,13 +1,13 @@
-import { BlackjackScene } from '../games/blackjackScene'
+import { SpeedScene } from '../games/speedScene'
 import { PreloadScene } from '../games/common/preloadScene'
-import BlackjackTable from '../model/blackjack/blackjackTable'
+import SpeedTable from '../model/speed/speedTable'
 
-export class BlackjackController {
+export class SpeedController {
   /*
   startGame(table: BlackjackTable): void
   ゲームのシーンを開始する
   */
-  static startGame(table: BlackjackTable) {
+  static startGame(table: SpeedTable) {
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: 'app',
@@ -20,7 +20,7 @@ export class BlackjackController {
       }
     })
     game.scene.add('preload', PreloadScene, false)
-    game.scene.add('blackjack', BlackjackScene, false)
+    game.scene.add('speed', SpeedScene, false)
 
     game.scene.start('preload', { table: table })
   }

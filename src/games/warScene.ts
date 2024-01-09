@@ -411,13 +411,16 @@ export class WarView extends BaseScene {
     new Button(this, 500, 500, 'Again', 'orange-button', 'select-se', () => {
       const root = document.getElementById('app')
       root!.innerHTML = ''
-      WarController.startGame(new Table('war'))
+      WarController.startGame(new Table('war', this.table.user.name))
     })
 
     new Button(this, 500, 600, 'Back', 'orange-button', 'select-se', () => {
       const root = document.getElementById('app')
       root!.innerHTML = ''
-      Controller.renderModeSelectPage(['blackjack', 'war'], 'player')
+      Controller.renderModeSelectPage(
+        ['blackjack', 'war', 'poker', 'speed'],
+        this.table.user.name
+      )
     })
 
     let dealerPocketLength = dealer.pocket.length
@@ -427,19 +430,19 @@ export class WarView extends BaseScene {
       this.add.text(
         400,
         200,
-        `PLAYER: ${playerPocketLength} / 🥇DEALER: ${dealerPocketLength}`
+        `${this.table.user.name}: ${playerPocketLength} / 🥇DEALER: ${dealerPocketLength}`
       )
     } else if (dealerPocketLength < playerPocketLength) {
       this.add.text(
         400,
         200,
-        `🥇PLAYER: ${playerPocketLength} / DEALER: ${dealerPocketLength}`
+        `🥇${this.table.user.name}: ${playerPocketLength} / DEALER: ${dealerPocketLength}`
       )
     } else {
       this.add.text(
         400,
         200,
-        `PLAYER: ${playerPocketLength} / DEALER: ${dealerPocketLength}`
+        `${this.table.user.name}: ${playerPocketLength} / DEALER: ${dealerPocketLength}`
       )
     }
   }

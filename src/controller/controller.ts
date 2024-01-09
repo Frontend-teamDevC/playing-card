@@ -1,11 +1,13 @@
 import { Config } from '../config/pageConfig'
 import BlackjackTable from '../model/blackjack/blackjackTable'
 import WarTable from '../model/war/warTable'
+import SpeedTable from '../model/speed/speedTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
 import { ModeDetail } from '../view/modeDetail'
 import { BlackjackController } from './blackjackController'
 import { WarController } from './warController'
+import { SpeedController } from './speedController'
 
 export class Controller {
   /*
@@ -22,7 +24,10 @@ export class Controller {
       ) as HTMLInputElement
       if (nameInput.value) {
         Config.displayNone()
-        this.renderModeSelectPage(['blackjack', 'war'], nameInput.value)
+        this.renderModeSelectPage(
+          ['blackjack', 'war', 'poker', 'speed'],
+          nameInput.value
+        )
       }
     })
   }
@@ -49,6 +54,12 @@ export class Controller {
             this.renderGamePage(mode, username)
             break
           case 'war':
+            Config.displayNone()
+            this.renderGamePage(mode, username)
+            break
+          case 'poker':
+            break
+          case 'speed':
             Config.displayNone()
             this.renderGamePage(mode, username)
             break
@@ -84,7 +95,10 @@ export class Controller {
 
     document.getElementById('backButton')!.addEventListener('click', () => {
       Config.displayNone()
-      this.renderModeSelectPage(['blackjack', 'war'], username)
+      this.renderModeSelectPage(
+        ['blackjack', 'war', 'poker', 'speed'],
+        username
+      )
     })
 
     document.getElementById('play-tab')!.addEventListener('click', () => {
@@ -159,7 +173,15 @@ export class Controller {
           break
         case 'war':
           Config.displayNone()
-          WarController.startGame(new WarTable('war'))
+          WarController.startGame(new WarTable('war', username!))
+          break
+        case 'poker':
+          break
+        case 'speed':
+          Config.displayNone()
+          SpeedController.startGame(
+            new SpeedTable('speed', username!, difficulty)
+          )
           break
       }
     })

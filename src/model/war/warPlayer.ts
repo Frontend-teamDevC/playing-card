@@ -1,6 +1,7 @@
 import Card from './warCard'
 
 export default class WarPlayer {
+  name: string
   pocket: any
   hand: any
   deck: any
@@ -8,7 +9,8 @@ export default class WarPlayer {
   type: any
   warCard: Card | undefined
 
-  constructor(type: any) {
+  constructor(name: string, type: any) {
+    this.name = name
     this.pocket = []
     this.hand = [null, null, null]
     this.deck = []
