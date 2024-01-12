@@ -3,7 +3,7 @@ import { BaseScene } from "./common/baseScene";
 import Text = Phaser.GameObjects.Text;
 import Sprite = Phaser.GameObjects.Sprite;
 import Phaser from "phaser";
-import { WideButton } from "./common/wide-button";
+import { WideButton } from "./common/wideButton";
 export class PokerView extends BaseScene {
     private width: number = 0;
     private height: number = 0;
@@ -26,7 +26,7 @@ export class PokerView extends BaseScene {
 
     create(data: any) {
         // reset all the scene
-        console.log("Aaaaa")
+        this.table = data.table;
         this.actionButtons = [];
         this.playerhandsImages = [];
         this.playerNameInfo = [];
@@ -35,15 +35,11 @@ export class PokerView extends BaseScene {
         this.playerBetInfo = [];
         this.playerHandInfo = [];
         this.dealerCoinInfo = [];
-
         const { width, height } = this.cameras.main;
         this.width = width;
         this.height = height;
         super.create(data);
-        this.table = data.table;
-
         this.renderScene();
-        // this.renderResultLog();
     }
 
     getResultTableData(): (string | number)[][] {

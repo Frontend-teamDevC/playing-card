@@ -2,7 +2,7 @@ import {
   BlackjackActionType,
   BlackjackStatusType
 } from '../../config/blackjackConfig'
-import { PokerActionType, PokerStatusType } from '../../config/pokerConfig'
+import { PokerActionType, PokerHandType, PokerStatusType } from '../../config/pokerConfig'
 import { SpeedStatusType } from '../../config/speedConfig'
 import pokerPlayer from '../poker/pokerPlayer'
 import Card from './card'
@@ -42,5 +42,5 @@ export default abstract class Player {
   getHandScore(): number
   手札の合計スコアを計算して返す
   */
-  abstract getHandScore(player? : pokerPlayer): number
+  abstract getHandScore(player? : pokerPlayer): number | PokerHandType
 }

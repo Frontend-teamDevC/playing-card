@@ -1,6 +1,5 @@
 import Phaser from 'phaser'
 import { CardConfig } from '../../config/cardConfig'
-import Table from '../../model/common/table'
 
 export class PreloadScene extends Phaser.Scene {
   #progressBox: Phaser.GameObjects.Graphics | null = null
