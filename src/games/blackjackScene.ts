@@ -96,7 +96,7 @@ export class BlackjackScene extends BaseScene {
         setTimeout(() => {
           if (
             this.dealer!.gameStatus === 'acting' &&
-            this.dealer!.getHandScore() < 17
+            this.dealer!.getHandScore() as number < 17
           ) {
             this.table!.haveTurn()
 
@@ -616,9 +616,9 @@ export class BlackjackScene extends BaseScene {
 
     // if user won, play win sound
     if (
-      this.user!.getHandScore() > 21 ||
+      this.user!.getHandScore() as number > 21 ||
       (this.dealer!.getHandScore() > this.user!.getHandScore() &&
-        this.dealer!.getHandScore() <= 21) ||
+        this.dealer!.getHandScore() as number  <= 21) ||
       this.user!.gameStatus === 'surrender'
     ) {
       this.sound.play('lose-se')

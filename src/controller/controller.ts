@@ -8,6 +8,8 @@ import { ModeDetail } from '../view/modeDetail'
 import { BlackjackController } from './blackjackController'
 import { WarController } from './warController'
 import { SpeedController } from './speedController'
+import { PokerController } from './pokerController'
+import pokerTable from '../model/poker/pokerTable'
 
 export class Controller {
   /*
@@ -58,6 +60,8 @@ export class Controller {
             this.renderGamePage(mode, username)
             break
           case 'poker':
+            Config.displayNone();
+            this.renderGamePage(mode, username);
             break
           case 'speed':
             Config.displayNone()
@@ -176,6 +180,8 @@ export class Controller {
           WarController.startGame(new WarTable('war', username!))
           break
         case 'poker':
+          Config.displayNone();
+          PokerController.startGame(new pokerTable("poker", maxRounds))
           break
         case 'speed':
           Config.displayNone()

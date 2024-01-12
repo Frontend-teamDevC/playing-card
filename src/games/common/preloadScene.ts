@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { CardConfig } from '../../config/cardConfig'
+import Table from '../../model/common/table'
 
 export class PreloadScene extends Phaser.Scene {
   #progressBox: Phaser.GameObjects.Graphics | null = null
@@ -122,6 +123,8 @@ export class PreloadScene extends Phaser.Scene {
       this.scene.start('war', { table: data.table })
     } else if (data.table.gameType === 'speed') {
       this.scene.start('speed', { table: data.table })
+    } else if (data.table.gameType == "poker") {
+      this.scene.start('poker', { table : data.table})
     }
   }
 }
