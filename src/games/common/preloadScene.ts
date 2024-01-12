@@ -81,6 +81,7 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('coin', 'assets/coin.gif')
     this.load.image('orange-button', 'assets/ui/orange-button.png')
     this.load.image('blue-button', 'assets/ui/blue-button.png')
+    this.load.image('gray-button', 'assets/ui/gray-button.png')
 
     // 背景画像
     this.load.image('background', 'assets/ui/background.jpeg')
