@@ -13,9 +13,9 @@ export class InitialView {
     </div>
         <h1 class="text-slate-900 font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-center dark:text-white">トランプゲーム</h1>
         <p class="mt-6 text-lg text-slate-600 text-center max-w-3xl mx-auto dark:text-slate-400">全4種類のトランプゲームをちょっとした空き時間にお楽しみください。</p>
-        <div class="mt-10 flex flex-col lg:flex-row justify-center gap-y-4 lg:gap-x-6 text-sm">
-          <input id="name-input" name="email" value="" type="email" required placeholder="名前を入力してください" class="sm:flex items-center w-full lg:w-72 text-left space-x-3 px-4 h-12 bg-white ring-1 ring-slate-900/10 hover:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm rounded-lg text-slate-400 dark:bg-slate-800 dark:ring-0 dark:text-slate-300 dark:highlight-white/5 dark:hover:bg-slate-700" autocomplete="off" id="nuid-0">
-          <button id="start-button" class="bg-slate-900 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto dark:bg-sky-500 dark:highlight-white/20 dark:hover:bg-sky-400">はじめる</button>
+        <div class="mt-10 flex flex-col lg:flex-row justify-center gap-y-4 lg:gap-x-6">
+          <input id="name-input" name="email" value="" type="email" required placeholder="名前を入力してください" class="text-md sm:flex items-center w-full lg:w-72 text-left space-x-3 px-4 h-12 bg-white ring-1 ring-slate-900/10 hover:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-sm rounded-lg text-slate-400 dark:bg-slate-800 dark:ring-0 dark:text-slate-300 dark:highlight-white/5 dark:hover:bg-slate-700" autocomplete="off" id="nuid-0">
+          <button id="start-button" class="text-sm bg-slate-900 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 text-white font-semibold h-12 px-6 rounded-lg w-full flex items-center justify-center sm:w-auto dark:bg-sky-500 dark:highlight-white/20 dark:hover:bg-sky-400">はじめる</button>
         </div>
       </div>
     </div>
