@@ -1,28 +1,22 @@
-export class ModeSelectView {
-  // Breakpoint prefix	Minimum width	CSS
-  // sm	640px	@media (min-width: 640px) { ... }
-  // md	768px	@media (min-width: 768px) { ... }
-  // lg	1024px	@media (min-width: 1024px) { ... }
-  // xl	1280px	@media (min-width: 1280px) { ... }
-  // 2xl	1536px	@media (min-width: 1536px) { ... }
+import GameObject from '../game/gameObject'
+import { backButton } from '../component/back-button'
 
-  static render(modeList: string[], name?: string) {
+export class ModeSelectView {
+  static render(modeList: string[]) {
     const root = document.getElementById('app')
-    const backButton = this.backButtonElement()
     const cards = this.cardsElement(modeList)
 
     root!.innerHTML = `
-    <div id="header" class="pt-6 px-6">
-      <div class="flex justify-between items-center">
+    <div class="max-w-2xl mx-auto px-4 lg:px-8 md:pt-14">
+      <div class="pt-4 lg:pt-0">
         ${backButton}
-        <span class="text-sm opacity-70">${name}</span>
       </div>
       <div class="mt-10">
-        <h1 class="text-lg font-bold">Select a game mode</h1>
+        <h1 class="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">ゲーム選択</h1>
       </div>
-    </div>
-    <div id="cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 px-6">
-      ${cards}
+      <div id="cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-8">
+        ${cards}
+      </div>
     </div>
     `
   }
@@ -42,15 +36,19 @@ export class ModeSelectView {
 
     modeList.map((mode) => {
       element += `
-      <div id="${mode}" class="relative flex w-full rounded-lg bg-[#15191E] overflow-hidden cursor-pointer before:absolute before:w-full before:h-full before:bg-black before:bg-opacity-50 before:hover:bg-opacity-60">
-        <img src="/assets/ui/war-back.png" width="1080" height="720" />
-        <div class="absolute bottom-0 left-0 py-6 px-4">
-          <h2 class="text-md font-bold">${mode.replace(
-            mode[0],
-            mode[0].toUpperCase()
-          )}</h2>
-          <p class="mt-2 text-sm opacity-80">To ensure you can easily update your
-          project after deploying</p>
+      <div id="${mode}" class="overflow-hidden rounded-xl divide-y divide-slate-200 dark:divide-slate-800 ring-1 ring-slate-200 hover:ring-2 hover:ring-sky-500 dark:ring-slate-800 shadow bg-white dark:bg-slate-900 relative group flex flex-col dark:hover:ring-sky-400 cursor-pointer">
+        <div class="flex-1 px-4 py-5 sm:p-6">
+          <div class="mb-6 flex">
+            <div class="p-2 rounded-lg border-slate-200 dark:border-slate-900 bg-slate-100 dark:bg-slate-800">
+              <img src="/assets/card-label.svg" width="36" height="36" />
+            </div>
+          </div>
+          <h2 class="font-bold text-slate-900 dark:text-slate-200 truncate flex items-center gap-1.5">${
+            GameObject.game(mode)!.title
+          }</h2>
+          <p class="text-sm text-slate-700 dark:text-slate-400 leading-relaxed mt-1">${
+            GameObject.game(mode)!.description
+          }</p>
         </div>
       </div>
       `

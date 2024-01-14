@@ -5,6 +5,7 @@ import SpeedTable from '../model/speed/speedTable'
 import { InitialView } from '../view/initialView'
 import { ModeSelectView } from '../view/modeSelectView'
 import { ModeDetail } from '../view/modeDetail'
+import GameGuide from '../view/game-guide'
 import { BlackjackController } from './blackjackController'
 import { WarController } from './warController'
 import { SpeedController } from './speedController'
@@ -27,7 +28,7 @@ export class Controller {
       if (nameInput.value) {
         Config.displayNone()
         this.renderModeSelectPage(
-          ['blackjack', 'war', 'poker', 'speed'],
+          ['blackjack', 'poker', 'war', 'speed'],
           nameInput.value
         )
       }
@@ -40,7 +41,11 @@ export class Controller {
   */
   static renderModeSelectPage(modeList: string[], username?: string): void {
     // ModeSelectView.create(modeList)
-    ModeSelectView.render(modeList, username)
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    })
+    ModeSelectView.render(modeList)
 
     const backButton = document.getElementById('backButton')
     backButton!.addEventListener('click', () => {
@@ -60,8 +65,8 @@ export class Controller {
             this.renderGamePage(mode, username)
             break
           case 'poker':
-            Config.displayNone();
-            this.renderGamePage(mode, username);
+            Config.displayNone()
+            this.renderGamePage(mode, username)
             break
           case 'speed':
             Config.displayNone()
@@ -73,8 +78,12 @@ export class Controller {
   }
 
   static renderGamePage(mode: string, username?: string): void {
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    })
     Config.displayNone()
-    ModeDetail.render(mode, username!)
+    ModeDetail.render(mode)
 
     const difficultySelector = document.getElementById(
       'difficulty'
@@ -84,83 +93,31 @@ export class Controller {
       'rounds'
     ) as HTMLSelectElement
 
-    let difficulty = difficultySelector.value
-    let maxRounds = parseInt(roundsSelector.value)
-
-    difficultySelector.addEventListener('change', () => {
+    let difficulty: string
+    let maxRounds: number
+    if (difficultySelector) {
       difficulty = difficultySelector.value
-      console.log(difficulty)
-    })
 
-    roundsSelector.addEventListener('change', () => {
+      difficultySelector.addEventListener('change', () => {
+        difficulty = difficultySelector.value
+        console.log(difficulty)
+      })
+    }
+    if (roundsSelector) {
       maxRounds = parseInt(roundsSelector.value)
-      console.log(maxRounds)
-    })
+
+      roundsSelector.addEventListener('change', () => {
+        maxRounds = parseInt(roundsSelector.value)
+        console.log(maxRounds)
+      })
+    }
 
     document.getElementById('backButton')!.addEventListener('click', () => {
       Config.displayNone()
       this.renderModeSelectPage(
-        ['blackjack', 'war', 'poker', 'speed'],
+        ['blackjack', 'poker', 'war', 'speed'],
         username
       )
-    })
-
-    document.getElementById('play-tab')!.addEventListener('click', () => {
-      document
-        .getElementById('play-tab')!
-        .classList.add(
-          'before:absolute',
-          'before:bottom-[-1px]',
-          'before:w-full',
-          'before:bg-[#00C495]',
-          'before:h-[1px]',
-          'opacity-100'
-        )
-      document
-        .getElementById('detail-tab')!
-        .classList.remove(
-          'before:absolute',
-          'before:bottom-[-1px]',
-          'before:w-full',
-          'before:bg-[#00C495]',
-          'before:h-[1px]',
-          'opacity-100'
-        )
-      document.getElementById('play-tab')!.classList.remove('opacity-70')
-      document.getElementById('detail-tab')!.classList.add('opacity-70')
-      document.getElementById('play-view')!.classList.remove('hidden')
-      document.getElementById('play-view')!.classList.add('block')
-      document.getElementById('detail-view')!.classList.remove('block')
-      document.getElementById('detail-view')!.classList.add('hidden')
-    })
-
-    document.getElementById('detail-tab')!.addEventListener('click', () => {
-      document
-        .getElementById('play-tab')!
-        .classList.remove(
-          'before:absolute',
-          'before:bottom-[-1px]',
-          'before:w-full',
-          'before:bg-[#00C495]',
-          'before:h-[1px]',
-          'opacity-100'
-        )
-      document.getElementById('play-tab')!.classList.add('opacity-70')
-      document
-        .getElementById('detail-tab')!
-        .classList.add(
-          'before:absolute',
-          'before:bottom-[-1px]',
-          'before:w-full',
-          'before:bg-[#00C495]',
-          'before:h-[1px]',
-          'opacity-100'
-        )
-      document.getElementById('detail-tab')!.classList.remove('opacity-70')
-      document.getElementById('play-view')!.classList.remove('block')
-      document.getElementById('play-view')!.classList.add('hidden')
-      document.getElementById('detail-view')!.classList.remove('hidden')
-      document.getElementById('detail-view')!.classList.add('block')
     })
 
     document.getElementById('playButton')!.addEventListener('click', () => {
@@ -180,8 +137,8 @@ export class Controller {
           WarController.startGame(new WarTable('war', username!))
           break
         case 'poker':
-          Config.displayNone();
-          PokerController.startGame(new pokerTable("poker", maxRounds))
+          Config.displayNone()
+          PokerController.startGame(new pokerTable('poker', maxRounds))
           break
         case 'speed':
           Config.displayNone()
@@ -191,5 +148,76 @@ export class Controller {
           break
       }
     })
+
+    document.getElementById('guideButton')!.addEventListener('click', () => {
+      Config.displayNone()
+      this.renderGameGuide(mode, username)
+    })
+  }
+
+  /*
+  renderGameGuide(mode: string, username?: string): void
+  ゲームガイドページを描画する
+  */
+  static renderGameGuide(mode: string, username?: string): void {
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    })
+    Config.displayNone()
+    GameGuide.render(mode)
+
+    document.getElementById('backButton')!.addEventListener('click', () => {
+      Config.displayNone()
+      this.renderGamePage(mode, username)
+    })
+
+    const nav = document.querySelectorAll('.nav-item')
+    const tab = document.querySelectorAll('.tab-view')
+    for (let i = 0; i < nav.length; i++) {
+      nav[i].addEventListener('click', () => {
+        window.scroll({
+          top: 0,
+          behavior: 'instant'
+        })
+        for (let j = 0; j < nav.length; j++) {
+          nav[j].classList.remove(
+            'text-sky-500',
+            'dark:text-sky-500',
+            'border-b-2',
+            'border-sky-400',
+            'hover:border-b-2',
+            'hover:border-slate-300',
+            'dark:hover:border-slate-700'
+          )
+          nav[j].classList.add(
+            'text-slate-900',
+            'dark:text-slate-100',
+            'hover:border-b-2',
+            'hover:border-slate-300',
+            'dark:hover:border-slate-700'
+          )
+        }
+        nav[i].classList.remove(
+          'text-slate-900',
+          'dark:text-slate-100',
+          'hover:border-b-2',
+          'hover:border-slate-300',
+          'dark:hover:border-slate-700'
+        )
+        nav[i].classList.add(
+          'text-sky-500',
+          'dark:text-sky-500',
+          'border-b-2',
+          'border-sky-400'
+        )
+        for (let j = 0; j < tab.length; j++) {
+          tab[j].classList.remove('block')
+          tab[j].classList.add('hidden')
+        }
+        tab[i].classList.remove('hidden')
+        tab[i].classList.add('block')
+      })
+    }
   }
 }

@@ -1,115 +1,95 @@
-import Description from '../config/description'
+import { backButton } from '../component/back-button'
+import GameObject from '../game/gameObject'
 
 export class ModeDetail {
-  static render(type: string, name: string) {
+  static render(type: string) {
     const root = document.getElementById('app')
-    const playButton = this.playButtonElement()
-    const backButton = this.backButtonElement()
-    const diffSelect = this.difficultySelectElement()
-    const roundsSelect = this.roundsSelectElement()
-    const detail = this.detailElements(type)
+    const game = GameObject.game(type)
+    const regulation = this.regulation(GameObject.game(type)!.regulation)
 
     root!.innerHTML = `
-    <div id="header" class="pt-6 px-6">
-      <div class="flex justify-between items-center">
+    <div class="max-w-2xl mx-auto px-4 lg:px-8 md:pt-14">
+      <div class="pt-4 lg:pt-0">
         ${backButton}
-        <span class="text-sm opacity-70">${name}</span>
       </div>
       <div class="mt-10">
-        <h1 class="text-lg font-bold">${type.replace(
-          type[0],
-          type[0].toUpperCase()
-        )}</h1>
-      </div>
-    </div>
-    <div id="navigation" class="mt-6">
-      <div class="flex px-6 border-b border-[#2c3239]">
-        <div id="play-tab" class="relative flex items-center pb-2 cursor-pointer before:absolute before:bottom-[-1px] before:w-full before:bg-[#00C495] before:h-[1px]">
-          <span class="text-sm">プレイ</span>
+        <div class="mb-6 flex">
+          <div class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800">
+            <img src="/assets/card-label.svg" width="64" height="64" />
+          </div>
         </div>
-        <div id="detail-tab" class="relative flex items-center ml-6 pb-2 cursor-pointer opacity-70">
-          <span class="text-sm">遊び方</span>
+        <div class="mt-4 lg:mt-0">
+          <h1 class="inline-block text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight dark:text-slate-200">${
+            game!.title
+          }</h1>
+          <p class="mt-4 text-md text-slate-700 dark:text-slate-400">${
+            game!.description
+          }</p>
         </div>
-      </div>
-    </div>
-    <div id="play-view" class="block min-h-screen p-6 bg-[#15191E]">
-      <span class="text-sm opacity-50">Regulation</span>
-      <div class="mt-2 border border-[#2C3239] rounded-lg bg-[#0C1117]">
-        <div class="flex justify-between items-center py-2 px-4 border-b border-[#2C3239]">
-          <span class="text-sm opacity-70">Difficulty</span>
-          ${diffSelect}
+        <div class="py-6 flex flex-wrap gap-x-3 gap-y-1.5">
+          <button id="playButton" class="bg-slate-900 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50 flex-shrink-0 text-sm gap-x-2 px-3 py-2 shadow-sm ring-1 ring-inset text-white font-semibold rounded-md dark:bg-sky-500 dark:highlight-white/20 dark:hover:bg-sky-400 inline-flex items-center">ゲームを始める</button>
+          <button id="guideButton" class="focus:outline-none focus-visible:outline-0 disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium rounded-md text-sm gap-x-2 px-3 py-2 shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 text-slate-700 dark:text-slate-200 bg-slate-50 hover:bg-slate-100 disabled:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/50 dark:disabled:bg-slate-800 focus-visible:ring-2 focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 inline-flex items-center">遊び方を見る</button>
         </div>
-        <div class="flex justify-between items-center py-2 px-4 border-b border-[#2C3239]">
-          <span class="text-sm opacity-70">Rounds</span>
-          ${roundsSelect}
+        <div class="pt-10 border-t border-slate-200 dark:border-slate-800">
+          <span class="block mb-2 text-sm text-slate-700 dark:text-slate-400">ゲーム設定</span>
+          ${
+            regulation !== ''
+              ? `<div class="overflow-hidden rounded-lg divide-y divide-slate-200 dark:divide-slate-800 ring-1 ring-slate-200 dark:ring-slate-800 shadow bg-white dark:bg-slate-900 relative group flex flex-col">${regulation}</div>`
+              : `<p class="text-sm text-slate-700 dark:text-slate-400">設定できる項目はありません</p>`
+          }
         </div>
       </div>
-      <div class="mt-4">
-        ${playButton}
-      </div>
-    </div>
-    <div id="detail-view" class="hidden min-h-screen pb-6 px-6 bg-[#15191E]">
-      ${detail}
     </div>
     `
   }
 
-  static playButtonElement(): string {
-    const element = `
-    <button id="playButton" class="w-full h-10 rounded-lg bg-white text-[#0c1117] font-bold">Play</button>
-    `
-    return element
-  }
+  static regulation(reg: string[]): string {
+    let element = ''
 
-  static backButtonElement(): string {
-    const element = `
-    <div id="backButton" class="flex items-center cursor-pointer">
-      <img src="assets/ui/arrow.svg" width="10" height="15" />
-      <span class="ml-1 text-sm text-[#00C495]">ゲーム選択</span>
-    </div>
-    `
+    if (reg.length != 0) {
+      reg.map((regType: string) => {
+        switch (regType) {
+          case 'round':
+            element += this.roundsSelectElement()
+            break
+          case 'cpurank':
+            element += this.difficultySelectElement()
+            break
+        }
+      })
+    }
+
     return element
   }
 
   static difficultySelectElement(): string {
     const element = `
-    <select id="difficulty">
-      <option value="easy">弱い</option>
-      <option value="normal">普通</option>
-      <option value="hard">強い</option>
-    </select>
+    <div class="bg-slate-100/50 dark:bg-slate-800/50">
+    <div class="flex justify-between items-center px-4 py-2">
+      <span class="text-sm text-slate-700 dark:text-slate-400">CPUの強さ</span>
+      <select id="difficulty" class="relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input bg-transparent rounded-md text-sm text-slate-900 dark:text-white pe-8">
+        <option value="easy">弱い</option>
+        <option value="normal">普通</option>
+        <option value="hard">強い</option>
+      </select>
+    </div>
+    </div>
     `
     return element
   }
 
   static roundsSelectElement(): string {
     const element = `
-    <select id="rounds">
-      <option value="5">5ラウンドでプレイ</option>
-      <option value="7">7ラウンドでプレイ</option>
-    </select>
+    <div class="bg-slate-100/50 dark:bg-slate-800/50">
+    <div class="flex justify-between items-center px-4 py-2">
+      <span class="text-sm text-slate-700 dark:text-slate-400">ラウンド数</span>
+      <select id="rounds" class="relative block disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input bg-transparent rounded-md text-sm text-slate-900 dark:text-white pe-8">
+        <option value="5">5ラウンドでプレイ</option>
+        <option value="7">7ラウンドでプレイ</option>
+      </select>
+    </div>
+    </div>
     `
-    return element
-  }
-
-  static detailElements(type: string): string {
-    let element = ''
-    console.log(element)
-    if (type == 'war') {
-      Description.war.map((detail) => {
-        element += `
-            <h2 class="pt-6 text-sm font-bold">${detail.title}</h2>
-            <p class="text-sm opacity-70">${detail.text}</p>
-            ${
-              detail.imgSrc &&
-              `
-              <img src="${detail.imgSrc}">
-            `
-            }
-          `
-      })
-    }
-
     return element
   }
 }
