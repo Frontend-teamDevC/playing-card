@@ -42,8 +42,8 @@ export class PokerView extends BaseScene {
         this.renderScene();
     }
 
-    getResultTableData(): (string | number)[][] {
-        let tableData: (string | number)[][] = [[]];
+    getResultTableData(): string[][] {
+        let tableData: string[][] = [[]];
         for (let i = 0; i < this.table?.maxTurn! + 1; i++) {
             if (i == 0) {
                 tableData[0].push("Name");
@@ -69,7 +69,7 @@ export class PokerView extends BaseScene {
 
     renderResultLog() {
         this.destroyAllInfo();
-        const tableData:(string | number)[][]  = this.getResultTableData();
+        const tableData:string[][] = this.getResultTableData();
         
         // セルの幅と高さ
         const cellWidth = 100;
