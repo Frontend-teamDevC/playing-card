@@ -81,7 +81,7 @@ export default class BlackjackTable extends Table {
       player.gameStatus =
         player.getHandScore() === 21 && player.hand.length === 2
           ? 'blackjack'
-          : player.getHandScore() > 21
+          : player.getHandScore() as number  > 21
             ? 'bust'
             : 'stand'
       return
@@ -121,7 +121,7 @@ export default class BlackjackTable extends Table {
 
     if (player.type === 'ai') return
 
-    let score = player.getHandScore()
+    let score = player.getHandScore() as number 
     if (score === 21) {
       player.gameStatus = player.hand.length === 2 ? 'blackjack' : 'stand'
       return
@@ -139,7 +139,7 @@ export default class BlackjackTable extends Table {
     let dealerScore = this.dealer.getHandScore()
     let result = ''
     for (let player of this.players) {
-      let playerScore = player.getHandScore()
+      let playerScore = player.getHandScore() as number 
       if (player.gameStatus === 'surrender') {
         result += `${player.name} surrendered. ${player.bet} chips returned.\n`
       } else if (player.gameStatus === 'blackjack') {
