@@ -7,14 +7,14 @@ export class ModeSelectView {
     const cards = this.cardsElement(modeList)
 
     root!.innerHTML = `
-    <div class="lg:max-w-[1280px] lg:mx-auto px-4 lg:px-8 lg:pt-14">
+    <div class="max-w-2xl mx-auto px-4 lg:px-8 md:pt-14">
       <div class="pt-4 lg:pt-0">
         ${backButton}
       </div>
       <div class="mt-10">
-        <h1 class="text-lg text-[#111] font-bold">ゲーム選択</h1>
+        <h1 class="text-lg text-gray-900 dark:text-white font-bold">ゲーム選択</h1>
       </div>
-      <div id="cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 mb-8">
+      <div id="cards" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 mb-8">
         ${cards}
       </div>
     </div>
@@ -36,13 +36,17 @@ export class ModeSelectView {
 
     modeList.map((mode) => {
       element += `
-      <div id="${mode}" class="relative flex w-full rounded-lg bg-[#15191E] overflow-hidden cursor-pointer before:absolute before:w-full before:h-full before:bg-gradient-to-t before:from-[#275A33]/100 before:to-transparent">
-        <img src="/assets/${mode}.jpg" width="1080" height="720" />
-        <div class="absolute bottom-0 left-0 py-6 px-4">
-          <h2 class="text-sm font-bold text-white">${
+      <div id="${mode}" class="overflow-hidden rounded-xl divide-y divide-zinc-200 dark:divide-zinc-800 ring-1 ring-zinc-200 dark:ring-zinc-800 shadow bg-white dark:bg-zinc-900 relative group flex flex-col hover:ring-2 hover:ring-primary-500 dark:hover:ring-primary-400 hover:bg-zinc-100/50 dark:hover:bg-zinc-900/50 cursor-pointer">
+        <div class="flex-1 px-4 py-5 sm:p-6">
+          <div class="mb-6 flex">
+            <div class="p-2 rounded-lg border-zinc-200 dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800">
+              <img src="/assets/card-label.svg" width="36" height="36" />
+            </div>
+          </div>
+          <h2 class="text-zinc-900 dark:text-white text-base font-semibold truncate flex items-center gap-1.5">${
             GameObject.game(mode)!.title
           }</h2>
-          <p class="mt-1 text-xs text-white">${
+          <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">${
             GameObject.game(mode)!.description
           }</p>
         </div>

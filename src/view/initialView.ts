@@ -2,8 +2,8 @@ export class InitialView {
   static create() {
     const root = document.getElementById('app')
     root!.innerHTML = `
-    <div class="relative w-full h-screen flex flex-col justify-center items-center">
-      <div class="max-w-[640px] w-full p-6">
+    <div class="relative w-full h-screen flex items-center">
+      <div class="max-w-2xl w-full mx-auto px-4">
         <h1 class="text-xl font-bold text-[#111] text-center">Playing Card Games</h1>
         <div class="relative h-[200px]">
           <img id="card-front" class="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]" src="assets/cards/AS.png" />

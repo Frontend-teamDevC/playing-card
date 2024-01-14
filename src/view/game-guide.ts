@@ -8,14 +8,16 @@ export default class GameGuide {
     const content = this.content(type)
 
     root!.innerHTML = `
-    <div class="lg:max-w-[1280px] lg:flex lg:mx-auto lg:px-8">
-      <div class="sticky lg:h-full top-0 lg:top-14 lg:w-1/3 pt-4 lg:pt-0 px-4 lg:px-0 border-b lg:border-b-0 border-[#eaeaea] bg-white">
+    <div class="max-w-2xl mx-auto lg:px-8">
+      <div class="pt-4 lg:pt-14 px-4 lg:px-0">
         ${backButton}
-        <div class="flex gap-4 lg:flex-col py-4 lg:py-8">
+      </div>
+      <div class="sticky lg:h-full top-0 mt-6 pt-4 px-4 lg:px-0 border-b border-[#eaeaea] bg-white shadow-[0_10px_10px_-10px_rgba(0,0,0,0.05)]">
+        <div class="flex gap-4">
           ${navigation}
         </div>
       </div>
-      <div class="lg:w-2/3 lg:ml-8 px-4 lg:px-0 py-6 lg:py-14">${content}</div>
+      <div class="px-4 lg:px-0 py-6 lg:py-14">${content}</div>
     </div>
     `
   }
@@ -25,8 +27,10 @@ export default class GameGuide {
     const guide = GameObject.game(type)!.guide
     for (let i = 0; i < guide.length; i++) {
       element += `
-        <div class="nav-item text-sm cursor-pointer ${
-          i == 0 ? 'text-[#111]' : 'text-[#666]'
+        <div class="nav-item mb-[-1px] pb-3 text-sm cursor-pointer ${
+          i == 0
+            ? 'text-zinc-900 dark:text-white border-b-2 border-zinc-900'
+            : 'text-zinc-500 dark:text-zinc-400'
         }">${guide[i].type}</div>
         `
     }
@@ -47,8 +51,10 @@ export default class GameGuide {
         const b = document.createElement('div')
         b.classList.add('mb-10')
         b.innerHTML = `
-        <p class="text-sm lg:text-lg text-[#111] font-bold">${a.title}</p>
-        <p class="mt-1 text-sm lg:text-md text-[#666]">${a.text}</p>
+        <p class="text-sm text-zinc-900 dark:text-white">${a.title}</p>
+        <p class="mt-1 text-sm lg:text-md text-zinc-500 dark:text-zinc-400">${
+          a.text
+        }</p>
         <div class="mt-2 border border-[#eaeaea] rounded-lg overflow-hidden">
         ${
           a.image

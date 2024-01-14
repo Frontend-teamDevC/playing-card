@@ -39,6 +39,10 @@ export class Controller {
   */
   static renderModeSelectPage(modeList: string[], username?: string): void {
     // ModeSelectView.create(modeList)
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    })
     ModeSelectView.render(modeList)
 
     const backButton = document.getElementById('backButton')
@@ -70,6 +74,10 @@ export class Controller {
   }
 
   static renderGamePage(mode: string, username?: string): void {
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    })
     Config.displayNone()
     ModeDetail.render(mode)
 
@@ -146,6 +154,10 @@ export class Controller {
   ゲームガイドページを描画する
   */
   static renderGameGuide(mode: string, username?: string): void {
+    window.scroll({
+      top: 0,
+      behavior: 'instant'
+    })
     Config.displayNone()
     GameGuide.render(mode)
 
@@ -163,11 +175,21 @@ export class Controller {
           behavior: 'instant'
         })
         for (let j = 0; j < nav.length; j++) {
-          nav[j].classList.remove('text-[#111]')
-          nav[j].classList.add('text-[#666]')
+          nav[j].classList.remove(
+            'text-zinc-900',
+            'dark:text-white',
+            'border-b-2',
+            'border-zinc-900'
+          )
+          nav[j].classList.add('text-zinc-500', 'dark:text-zinc-400')
         }
-        nav[i].classList.remove('text-[#666]')
-        nav[i].classList.add('text-[#111]')
+        nav[i].classList.remove('text-zinc-500', 'dark:text-zinc-400')
+        nav[i].classList.add(
+          'text-zinc-900',
+          'dark:text-white',
+          'border-b-2',
+          'border-zinc-900'
+        )
         for (let j = 0; j < tab.length; j++) {
           tab[j].classList.remove('block')
           tab[j].classList.add('hidden')
