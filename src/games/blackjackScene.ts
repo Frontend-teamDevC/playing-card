@@ -624,7 +624,7 @@ export class BlackjackScene extends BaseScene {
       this.sound.play('lose-se')
     } else if (
       this.user!.getHandScore() > this.dealer!.getHandScore() ||
-      this.dealer!.getHandScore() > 21
+      this.dealer!.getHandScore()  as number > 21
     ) {
       this.sound.play('win-se')
     }
