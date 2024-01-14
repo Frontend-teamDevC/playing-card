@@ -1,7 +1,5 @@
 import { backButton } from '../component/back-button'
 import GameObject from '../game/gameObject'
-import Swiper from 'swiper/bundle'
-import 'swiper/css/bundle'
 
 export class ModeDetail {
   static render(type: string) {
