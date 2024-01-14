@@ -12,8 +12,8 @@ export default class GameGuide {
       <div class="pt-4 lg:pt-14 px-4 lg:px-0">
         ${backButton}
       </div>
-      <div class="sticky lg:h-full top-0 mt-6 pt-4 px-4 lg:px-0 border-b border-[#eaeaea] bg-white shadow-[0_10px_10px_-10px_rgba(0,0,0,0.05)]">
-        <div class="flex gap-4">
+      <div class="sticky lg:h-full top-0 mt-6 pt-4 px-4 lg:px-0 border-b border-[#eaeaea] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-[0_10px_10px_-10px_rgba(0,0,0,0.05)]">
+        <div class="flex gap-6">
           ${navigation}
         </div>
       </div>
@@ -27,10 +27,10 @@ export default class GameGuide {
     const guide = GameObject.game(type)!.guide
     for (let i = 0; i < guide.length; i++) {
       element += `
-        <div class="nav-item mb-[-1px] pb-3 text-sm cursor-pointer ${
+        <div class="nav-item mb-[-1px] pb-3 text-sm font-semibold cursor-pointer ${
           i == 0
-            ? 'text-zinc-900 dark:text-white border-b-2 border-zinc-900'
-            : 'text-zinc-500 dark:text-zinc-400'
+            ? 'text-sky-500 dark:text-sky-500 border-b-2 border-sky-400'
+            : 'text-slate-900 dark:text-slate-200 hover:border-b-2 hover:border-slate-300 dark:text-slate-200 dark:hover:border-slate-700'
         }">${guide[i].type}</div>
         `
     }
@@ -51,11 +51,13 @@ export default class GameGuide {
         const b = document.createElement('div')
         b.classList.add('mb-10')
         b.innerHTML = `
-        <p class="text-sm text-zinc-900 dark:text-white">${a.title}</p>
-        <p class="mt-1 text-sm lg:text-md text-zinc-500 dark:text-zinc-400">${
+        <p class="text-md font-semibold text-slate-900 dark:text-slate-100">${
+          a.title
+        }</p>
+        <p class="mt-1 text-sm lg:text-md text-slate-700 dark:text-slate-400 leading-relaxed">${
           a.text
         }</p>
-        <div class="mt-2 border border-[#eaeaea] rounded-lg overflow-hidden">
+        <div class="mt-2 border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden">
         ${
           a.image
             ? `

@@ -65,8 +65,8 @@ export class Controller {
             this.renderGamePage(mode, username)
             break
           case 'poker':
-            Config.displayNone();
-            this.renderGamePage(mode, username);
+            Config.displayNone()
+            this.renderGamePage(mode, username)
             break
           case 'speed':
             Config.displayNone()
@@ -137,8 +137,8 @@ export class Controller {
           WarController.startGame(new WarTable('war', username!))
           break
         case 'poker':
-          Config.displayNone();
-          PokerController.startGame(new pokerTable("poker", maxRounds))
+          Config.displayNone()
+          PokerController.startGame(new pokerTable('poker', maxRounds))
           break
         case 'speed':
           Config.displayNone()
@@ -182,19 +182,34 @@ export class Controller {
         })
         for (let j = 0; j < nav.length; j++) {
           nav[j].classList.remove(
-            'text-zinc-900',
-            'dark:text-white',
+            'text-sky-500',
+            'dark:text-sky-500',
             'border-b-2',
-            'border-zinc-900'
+            'border-sky-400',
+            'hover:border-b-2',
+            'hover:border-slate-300',
+            'dark:hover:border-slate-700'
           )
-          nav[j].classList.add('text-zinc-500', 'dark:text-zinc-400')
+          nav[j].classList.add(
+            'text-slate-900',
+            'dark:text-slate-100',
+            'hover:border-b-2',
+            'hover:border-slate-300',
+            'dark:hover:border-slate-700'
+          )
         }
-        nav[i].classList.remove('text-zinc-500', 'dark:text-zinc-400')
+        nav[i].classList.remove(
+          'text-slate-900',
+          'dark:text-slate-100',
+          'hover:border-b-2',
+          'hover:border-slate-300',
+          'dark:hover:border-slate-700'
+        )
         nav[i].classList.add(
-          'text-zinc-900',
-          'dark:text-white',
+          'text-sky-500',
+          'dark:text-sky-500',
           'border-b-2',
-          'border-zinc-900'
+          'border-sky-400'
         )
         for (let j = 0; j < tab.length; j++) {
           tab[j].classList.remove('block')
