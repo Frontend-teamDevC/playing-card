@@ -1,5 +1,5 @@
-import GameDecision from "../common/GameDecision.js";
-import { PokerActionType } from "../../config/pokerConfig.js";
+import GameDecision from "../common/gameDecision";
+import { PokerActionType } from "../../config/pokerConfig";
 
 export default class pokerGameDecision extends GameDecision {
     public action: PokerActionType;

@@ -6,7 +6,7 @@ import {
 } from "../../config/pokerConfig";
 import Card from "../common/card";
 import Table from "../common/table";
-import pokerGameDecision from "./pokerGameDecision.js";
+import pokerGameDecision from "./pokerGameDecision";
 import pokerPlayer from "./pokerPlayer.js";
 
 export default class pokerTable extends Table {
