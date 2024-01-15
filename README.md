@@ -10,7 +10,7 @@ CPU対戦限定で、以下4種類のトランプゲームがプレイできま�
 また、ゲーム別にCPUの強さやラウンド数の調整が可能です。
 あなた好みの楽しみ方で、ちょっとした空き時間のお供に。
 
-### 技術スタック
+## 技術スタック
 
 ![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](public/assets/stack.png)
 
@@ -27,6 +27,13 @@ CPU対戦限定で、以下4種類のトランプゲームがプレイできま�
 ### 将来実装したいと考えている機能について
 
 - ログイン機能の追加
+
+### その他の開発内容を確認する
+
+- [要件定義](https://github.com/Frontend-teamDevC/playing-card/wiki/%E8%A6%81%E4%BB%B6%E5%AE%9A%E7%BE%A9)
+- [規約](https://github.com/Frontend-teamDevC/playing-card/wiki/%E8%A6%8F%E7%B4%84)
+- [設計](https://github.com/Frontend-teamDevC/playing-card/wiki/%E8%A8%AD%E8%A8%88)
+- [開発ログ](https://github.com/Frontend-teamDevC/playing-card/wiki/%E9%96%8B%E7%99%BA%E3%83%AD%E3%82%B0)
 
 ## ゲームの遊び方
 
