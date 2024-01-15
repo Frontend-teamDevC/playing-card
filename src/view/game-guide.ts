@@ -30,7 +30,7 @@ export default class GameGuide {
         <div class="nav-item mb-[-1px] pb-3 text-sm font-semibold cursor-pointer ${
           i == 0
             ? 'text-sky-500 dark:text-sky-500 border-b-2 border-sky-400'
-            : 'text-slate-900 dark:text-slate-200 hover:border-b-2 hover:border-slate-300 dark:text-slate-200 dark:hover:border-slate-700'
+            : 'text-slate-900 dark:text-slate-100 hover:border-b-2 hover:border-slate-300 dark:hover:border-slate-700'
         }">${guide[i].type}</div>
         `
     }
