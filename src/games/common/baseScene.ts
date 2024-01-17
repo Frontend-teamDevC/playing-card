@@ -1,11 +1,12 @@
-import Phaser from 'phaser'
+// import Phaser from 'phaser'
+import { PreloadScene } from './preloadScene'
 
-export class BaseScene extends Phaser.Scene {
+export class BaseScene extends PreloadScene {
   create(data: any) {
     const table = data.table
     this.add.image(0, 0, 'background').setOrigin(0)
     this.createGameZone()
-    if (table.gameType !== "poker"){
+    if (table.gameType !== 'poker' && table.gameType !== 'war') {
       this.createNameText(table.user.name)
     }
   }
