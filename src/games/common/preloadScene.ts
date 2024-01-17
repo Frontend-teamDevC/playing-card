@@ -81,9 +81,11 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('orange-button', 'assets/ui/orange-button.png')
     this.load.image('blue-button', 'assets/ui/blue-button.png')
     this.load.image('gray-button', 'assets/ui/gray-button.png')
+    this.load.image('back-button', 'assets/ui/back-button.png')
 
     // 背景画像
     this.load.image('background', 'assets/ui/background.jpeg')
+    this.load.image('board', 'assets/ui/board.png')
     // BGM
 
     // SE
@@ -116,15 +118,14 @@ export class PreloadScene extends Phaser.Scene {
     this.#loadingText?.destroy()
     this.#percentText?.destroy()
 
-    console.log(data.table)
     if (data.table.gameType === 'blackjack') {
       this.scene.start('blackjack', { table: data.table })
     } else if (data.table.gameType === 'war') {
       this.scene.start('war', { table: data.table })
     } else if (data.table.gameType === 'speed') {
       this.scene.start('speed', { table: data.table })
-    } else if (data.table.gameType == "poker") {
-      this.scene.start('poker', { table : data.table})
+    } else if (data.table.gameType == 'poker') {
+      this.scene.start('poker', { table: data.table })
     }
   }
 }
