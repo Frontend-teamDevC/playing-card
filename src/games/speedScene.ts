@@ -354,8 +354,9 @@ export class SpeedScene extends BaseScene {
     cardImage.on('drag', (_pointer: any, dragX: number, dragY: number) => {
       // return if both players cannot submit
       if (
-        !this.canSubmit(this.#userHandsImages) &&
-        !this.canSubmit(this.#dealerHandImages)
+        (!this.canSubmit(this.#userHandsImages) &&
+          !this.canSubmit(this.#dealerHandImages)) ||
+        this.#layoutCardsImages.length <= 0
       ) {
         this.toPrevPosition(cardImage, prevX, prevY)
         return
@@ -363,7 +364,7 @@ export class SpeedScene extends BaseScene {
 
       cardImage.x = dragX
       cardImage.y = dragY
-      // extend and shrink repeatedly
+
       cardImage.scaleX = 1.2
       cardImage.scaleY = 1.2
       // layout cardImageより前面に出す
@@ -429,6 +430,7 @@ export class SpeedScene extends BaseScene {
           )
         } else {
           this.submitCard(this.dealer)
+          console.log(this.#layoutCardsImages[0])
         }
 
         if (this.user!.dividedDeck.length > 0) {
@@ -448,6 +450,7 @@ export class SpeedScene extends BaseScene {
             0,
             1
           )
+          console.log(this.#layoutCardsImages[1])
           // return
         }
       }
@@ -661,6 +664,11 @@ export class SpeedScene extends BaseScene {
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#userCardsText?.destroy()
     this.#dealerCardsText?.destroy()
+
+    // desable interactive if there are user hands left
+    this.#userHandsImages.forEach((cardImage: Image) => {
+      cardImage.disableInteractive()
+    })
 
     const resultText = this.add.text(400, 50, '', {
       fontSize: '30px',
