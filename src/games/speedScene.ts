@@ -430,7 +430,6 @@ export class SpeedScene extends BaseScene {
           )
         } else {
           this.submitCard(this.dealer)
-          console.log(this.#layoutCardsImages[0])
         }
 
         if (this.user!.dividedDeck.length > 0) {
@@ -450,8 +449,6 @@ export class SpeedScene extends BaseScene {
             0,
             1
           )
-          console.log(this.#layoutCardsImages[1])
-          // return
         }
       }
     }, 2000)
