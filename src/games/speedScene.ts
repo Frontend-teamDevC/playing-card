@@ -1,12 +1,12 @@
 import { Controller } from '../controller/controller'
+import { SpeedController } from '../controller/speedController'
 import Card from '../model/common/card'
+import SpeedPlayer from '../model/speed/speedPlayer'
 import SpeedTable from '../model/speed/speedTable'
 import { BaseScene } from './common/baseScene'
 import { Button } from './common/button'
 import Text = Phaser.GameObjects.Text
 import Image = Phaser.GameObjects.Image
-import SpeedPlayer from '../model/speed/speedPlayer'
-import { SpeedController } from '../controller/speedController'
 
 export class SpeedScene extends BaseScene {
   table: SpeedTable | null = null
@@ -340,17 +340,35 @@ export class SpeedScene extends BaseScene {
     })
 
     cardImage.on('dragstart', () => {
-      this.sound.play('card-flip-se')
+      // return if both players cannot submit
+      if (
+        !this.canSubmit(this.#userHandsImages) &&
+        !this.canSubmit(this.#dealerHandImages)
+      ) {
+        this.toPrevPosition(cardImage, prevX, prevY)
+        return
+      }
 
-      // layout cardImageより前面に出す
-      this.children.bringToTop(cardImage)
+      this.sound.play('card-flip-se')
     })
     cardImage.on('drag', (_pointer: any, dragX: number, dragY: number) => {
+      // return if both players cannot submit
+      if (
+        (!this.canSubmit(this.#userHandsImages) &&
+          !this.canSubmit(this.#dealerHandImages)) ||
+        this.#layoutCardsImages.length <= 0
+      ) {
+        this.toPrevPosition(cardImage, prevX, prevY)
+        return
+      }
+
       cardImage.x = dragX
       cardImage.y = dragY
-      // extend and shrink repeatedly
+
       cardImage.scaleX = 1.2
       cardImage.scaleY = 1.2
+      // layout cardImageより前面に出す
+      this.children.bringToTop(cardImage)
     })
     cardImage.on('dragend', () => {
       if (this.checkValidMove(cardImage)) {
@@ -362,6 +380,7 @@ export class SpeedScene extends BaseScene {
             : this.#layoutCardsImages[1]
         const layoutIndex = this.#layoutCardsImages.indexOf(layout)
         this.submitCard(this.user, cardImage, layout, i, layoutIndex)
+        this.children.bringToTop(cardImage)
       } else {
         this.toPrevPosition(cardImage, prevX, prevY)
       }
@@ -430,7 +449,6 @@ export class SpeedScene extends BaseScene {
             0,
             1
           )
-          // return
         }
       }
     }, 2000)
@@ -643,6 +661,11 @@ export class SpeedScene extends BaseScene {
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#userCardsText?.destroy()
     this.#dealerCardsText?.destroy()
+
+    // desable interactive if there are user hands left
+    this.#userHandsImages.forEach((cardImage: Image) => {
+      cardImage.disableInteractive()
+    })
 
     const resultText = this.add.text(400, 50, '', {
       fontSize: '30px',
