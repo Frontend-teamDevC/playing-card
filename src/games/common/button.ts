@@ -56,8 +56,8 @@ export class Button extends Phaser.GameObjects.Container {
 
     // adjust image size
     const { width, height } = this.#text
-    this.#image.displayWidth = width + 50
-    this.#image.displayHeight = height + 50
+    this.#image.displayWidth = width + 100
+    this.#image.displayHeight = height + 70
 
     // adjust text position
     this.#text.x = -width / 2

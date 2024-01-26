@@ -27,8 +27,6 @@ export class SpeedScene extends BaseScene {
   #piledLayoutCardsImages: Image[] = []
 
   /**
-   *
-   * create(data: any) : void
    * SpeedSceneを初期化する関数
    *
    * @param {any} data - SpeedTableのインスタンスを含むデータ
@@ -50,10 +48,11 @@ export class SpeedScene extends BaseScene {
 
   /**
    * SpeedSceneの描画を行う関数
-   * @param {void}
    * @returns {void}
    */
-  renderScene() {
+  renderScene(): void {
+    this.arrowBackButton()
+
     this.dealInitialHandsAndDecks()
     setTimeout(() => {
       this.setLayoutCardImage(
@@ -86,7 +85,6 @@ export class SpeedScene extends BaseScene {
   /**
    * カウントダウンテキストを表示する関数
    *
-   * @param {void}
    * @returns {void}
    */
   countDown(): void {
@@ -769,7 +767,6 @@ export class SpeedScene extends BaseScene {
   /**
    * ゲームの最終結果画面を表示する関数
    *
-   * @param {void}
    * @returns {void}
    */
   finalResults(): void {
@@ -783,24 +780,27 @@ export class SpeedScene extends BaseScene {
       cardImage.disableInteractive()
     })
 
-    const resultText = this.add.text(400, 50, '', {
-      fontSize: '30px',
-      color: 'orange',
-      fontFamily: 'pixel'
-    })
+    this.add.image(540, 360, 'board')
+
+    const resultText = this.add
+      .text(540, 300, '', {
+        fontSize: '24px',
+        color: 'black'
+      })
+      .setOrigin(0.5, 0)
 
     if (this.user!.hand.length <= 0) {
       resultText.setText(
-        `🏆You Win!\nディーラートノ差: ${
+        `🏆You Win!\nディーラーとの差: ${
           this.dealer!.hand.length + this.dealer!.dividedDeck.length
-        }マイ`
+        }枚`
       )
       this.sound.play('win-se')
     } else if (this.dealer!.hand.length <= 0) {
       resultText.setText(
-        `You Lose...\nディーラートノ差: ${
+        `You Lose...\nディーラーとの差: ${
           this.dealer!.hand.length + this.dealer!.dividedDeck.length
-        }マイ`
+        }枚`
       )
       this.sound.play('lose-se')
     }
@@ -811,14 +811,13 @@ export class SpeedScene extends BaseScene {
 
   /**
    * もう一度遊ぶボタンを表示する関数
-   * @param {void}
    * @returns {Button} - もう一度遊ぶボタン
    * */
   againButton(): Button {
     return new Button(
       this,
-      500,
-      500,
+      540,
+      400,
       'Again',
       'orange-button',
       'select-se',
@@ -834,14 +833,13 @@ export class SpeedScene extends BaseScene {
 
   /**
    * モード選択画面に戻るボタンを表示する関数
-   * @param {void}
    * @returns {Button} - モード選択画面に戻るボタン
    * */
   backButton(): Button {
     return new Button(
       this,
-      500,
-      600,
+      540,
+      550,
       'Back',
       'orange-button',
       'select-se',
@@ -854,5 +852,16 @@ export class SpeedScene extends BaseScene {
         )
       }
     )
+  }
+
+  arrowBackButton(): Button {
+    return new Button(this, 55, 55, '', 'back-button', 'select-se', () => {
+      const root = document.getElementById('app')
+      root!.innerHTML = ''
+      Controller.renderModeSelectPage(
+        ['blackjack', 'war', 'poker', 'speed'],
+        this.user!.name
+      )
+    })
   }
 }

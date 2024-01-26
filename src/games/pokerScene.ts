@@ -8,6 +8,7 @@ export class PokerView extends BaseScene {
   private width: number = 0
   private height: number = 0
   private table: pokerTable | null = null
+  //   private user: PokerPlayer | null = null
 
   // playerInfo
   private potInfo: Text | null = null
@@ -33,6 +34,7 @@ export class PokerView extends BaseScene {
   create(data: any): void {
     // reset all the scene
     this.table = data.table
+    // this.user = this.table!.players[0]
     this.actionButtons = []
     this.playerhandsImages = []
     this.playerNameInfo = []
@@ -128,6 +130,9 @@ export class PokerView extends BaseScene {
         cellBackground.setStrokeStyle(2, 0xffffff)
       }
     }
+
+    // this.againButton()
+    // this.backButton()
   }
 
   /**
@@ -154,6 +159,8 @@ export class PokerView extends BaseScene {
    * @returns {void}
    */
   renderScene(): void {
+    // this.arrowBackButton()
+
     console.log(
       'ROUNDCOUNTER',
       this.table!.roundCounter,
@@ -946,4 +953,59 @@ export class PokerView extends BaseScene {
     )
     this.actionButtons.push(raiseButton)
   }
+  /**
+   * もう一度遊ぶボタンを表示する関数
+   * @returns {Button} - もう一度遊ぶボタン
+   * */
+  //   againButton(): Button {
+  //     return new Button(
+  //       this,
+  //       750,
+  //       550,
+  //       'Again',
+  //       'orange-button',
+  //       'select-se',
+  //       () => {
+  //         const root = document.getElementById('app')
+  //         root!.innerHTML = ''
+  //         this.table = new pokerTable(this.user!.name, this.table!.maxTurn)
+
+  //         PokerController.startGame(this.table!)
+  //       }
+  //     )
+  //   }
+
+  //   /**
+  //    * モード選択画面に戻るボタンを表示する関数
+  //    * @returns {Button} - モード選択画面に戻るボタン
+  //    * */
+  //   backButton(): Button {
+  //     return new Button(
+  //       this,
+  //       550,
+  //       550,
+  //       'Back',
+  //       'orange-button',
+  //       'select-se',
+  //       () => {
+  //         const root = document.getElementById('app')
+  //         root!.innerHTML = ''
+  //         Controller.renderModeSelectPage(
+  //           ['blackjack', 'war', 'poker', 'speed'],
+  //           this.user!.name
+  //         )
+  //       }
+  //     )
+  //   }
+
+  //   arrowBackButton(): Button {
+  //     return new Button(this, 55, 55, '', 'back-button', 'select-se', () => {
+  //       const root = document.getElementById('app')
+  //       root!.innerHTML = ''
+  //       Controller.renderModeSelectPage(
+  //         ['blackjack', 'war', 'poker', 'speed'],
+  //         this.user!.name
+  //       )
+  //     })
+  //   }
 }

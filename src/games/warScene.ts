@@ -1,6 +1,7 @@
 import { Controller } from '../controller/controller'
 import { WarController } from '../controller/warController'
 import Card from '../model/common/card'
+import WarPlayer from '../model/war/warPlayer'
 import Table from '../model/war/warTable'
 import { BaseScene } from './common/baseScene'
 import { Button } from './common/button'
@@ -10,6 +11,7 @@ const CARD_HEIGHT = 89
 
 export class WarView extends BaseScene {
   private table: Table | null = null
+  private user: WarPlayer | null = null
   private dealerWarCard: Phaser.GameObjects.Image | null = null
   private playerWarCard: Phaser.GameObjects.Image | null = null
 
@@ -31,6 +33,7 @@ export class WarView extends BaseScene {
   public create(data: any): void {
     super.create(data)
     this.table = data.table
+    this.user = this.table!.players[1]
     this.initilizeGame()
     this.add
       .text(132, 200, 'Dealer', {
@@ -47,15 +50,17 @@ export class WarView extends BaseScene {
       })
       .setOrigin(0.5, 0)
 
-    let backButton = this.add
-      .image(20, 20, 'back-button')
-      .setInteractive()
-      .setOrigin(0, 0)
-    backButton.on('pointerdown', () => {
-      const root = document.getElementById('app')
-      root!.innerHTML = ''
-      Controller.renderGamePage(data.table.gameType, data.table.user.name)
-    })
+    // let backButton = this.add
+    //   .image(20, 20, 'back-button')
+    //   .setInteractive()
+    //   .setOrigin(0, 0)
+    // backButton.on('pointerdown', () => {
+    //   const root = document.getElementById('app')
+    //   root!.innerHTML = ''
+    //   Controller.renderGamePage(data.table.gameType, data.table.user.name)
+    // })
+
+    this.arrowBackButton()
   }
 
   /**
@@ -599,5 +604,16 @@ export class WarView extends BaseScene {
         .setOrigin(0.5, 0)
       this.sound.play('lose-se')
     }
+  }
+
+  arrowBackButton(): Button {
+    return new Button(this, 55, 55, '', 'back-button', 'select-se', () => {
+      const root = document.getElementById('app')
+      root!.innerHTML = ''
+      Controller.renderModeSelectPage(
+        ['blackjack', 'war', 'poker', 'speed'],
+        this.user!.name
+      )
+    })
   }
 }
