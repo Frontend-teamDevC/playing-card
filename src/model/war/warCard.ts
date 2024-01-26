@@ -7,6 +7,11 @@ export default class Card {
     this.rank = rank
   }
 
+  /**
+   * カードのランクの数値を返す関数
+   *
+   * @returns {string} - カードランクの数値
+   */
   public getRankNumber(): number {
     let num: number
     switch (this.rank) {

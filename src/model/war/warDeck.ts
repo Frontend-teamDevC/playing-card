@@ -31,6 +31,11 @@ export default class Deck {
     }
   }
 
+  /**
+   * カードをシャッフルする関数
+   *
+   * @returns {void}
+   */
   public shuffle(): void {
     for (let i = this.cards.length - 1; i >= 0; i--) {
       let j = Math.floor(Math.random() * (i + 1))
@@ -40,11 +45,21 @@ export default class Deck {
     }
   }
 
+  /**
+   * デッキをリセットする関数
+   *
+   * @returns {void}
+   */
   public resetDeck(): void {
     let newCards = new Deck(this.gameType, this.type)
     this.cards = newCards.cards
   }
 
+  /**
+   * カードを一枚引く関数
+   *
+   * @returns {Card} - 引いたカード
+   */
   public drawOne(): Card {
     return this.cards.pop() as Card
   }

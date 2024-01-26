@@ -18,10 +18,12 @@ export default class BlackjackPlayer extends Player {
     this.gameStatus = this.type === 'dealer' ? 'waiting' : 'betting'
   }
 
-  /*
-  promptPlayer(userData?: number | BlackjackActionType): GameDecision
-  プレイヤーのゲーム内での行動を返す
-  */
+  /**
+   * プレイヤーの行動に応じた処理を行う関数
+   *
+   * @param userData  - 特定のユーザーの情報
+   * @returns
+   */
   promptPlayer(userData?: number | BlackjackActionType): GameDecision {
     let score = this.getHandScore()
     if (this.type === 'human') {
@@ -72,10 +74,11 @@ export default class BlackjackPlayer extends Player {
     return new GameDecision('stand')
   }
 
-  /*
-  getHandScore(): number
-  手札の合計スコアを計算して返す
-  */
+  /**
+   * プレイヤーの手札の合計値を返す関数
+   *
+   * @returns {number} - プレイヤーの手札の合計値
+   */
   getHandScore(): number {
     let score = 0
     let aceCount = 0

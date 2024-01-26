@@ -16,10 +16,9 @@ export class BaseScene extends PreloadScene {
   }
 
   createNameText(username: string) {
-    this.add.text(5, 0, `${username}`, {
+    this.add.text(900, 0, `${username}`, {
       fontSize: '30px',
-      color: '#ffffff',
-      fontFamily: 'pixel'
+      color: '#ffffff'
     })
   }
 }
