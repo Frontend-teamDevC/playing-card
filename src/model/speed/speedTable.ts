@@ -1,6 +1,6 @@
 import Card from '../common/card'
-import Table from '../common/table'
 import Player from '../common/player'
+import Table from '../common/table'
 import SpeedPlayer from './speedPlayer'
 
 export default class SpeedTable extends Table {
@@ -22,10 +22,10 @@ export default class SpeedTable extends Table {
     this.assignLayoutCards()
   }
 
-  /*
-        assignPlayerDecks(): void
-        ディーラーと全プレイヤーにカードを配る
-        */
+  /**
+   * デッキを半分ずつ分けて各プレイヤーに配る
+   * @returns {void}
+   */
   assignPlayerDecks(): void {
     while (this.deck.cards.length > 0) {
       this.user.dividedDeck.push(this.deck.cards.shift()!)
@@ -34,10 +34,11 @@ export default class SpeedTable extends Table {
     }
   }
 
-  /*
-    assignPlayerHands(): void
-    ディーラーと全プレイヤーにカードを4枚ずつ配る
-    */
+  /**
+   * 各プレイヤーに手札を配る関数
+   *
+   * @returns {void}
+   */
   assignPlayerHands(): void {
     for (let i = 0; i < 4; i++) {
       this.user.hand.push(this.user.dividedDeck.shift()!)
@@ -45,35 +46,40 @@ export default class SpeedTable extends Table {
     }
   }
 
-  /*
-        assignLayoutCards(): void
-        場札２枚を配置する
-        */
+  /**
+   * 場札を配置する関数
+   *
+   * @returns {void}
+   */
   assignLayoutCards(): void {
     this.layoutCards.push(this.user.dividedDeck.shift()!)
     this.layoutCards.push(this.dealer.dividedDeck.shift()!)
   }
 
-  /*
-    evaluateMove(player: Player, userData?: number | BlackjackActionType): void
-    promptPlayer()で取得したプレイヤーの行動に応じてゲームの状態を更新する
-    */
+  /**
+   * プレイヤーの行動に応じた処理を行う関数
+   *
+   * @param {Player} _player - プレイヤー
+   * @returns {void}
+   */
   evaluateMove(_player: Player): void {}
 
-  /*
-    evaluateAndGetFinalResults(): string
-    全ラウンド終了後、チップの数でプレイヤーを順位付けし、結果を返す
-    */
+  /**
+   * ゲームの最終結果を返す関数
+   *
+   * @returns {string} - ゲームの最終結果
+   */
   evaluateAndGetFinalResults(): string {
     let result = ''
 
     return result
   }
 
-  /*
-    allPlayerActionsResolved(): boolean
-    ラウンド中の全プレイヤーの行動が完了しているかどうかを返す
-    */
+  /**
+   * 両プレイヤーの行動が完了したかどうかを返す関数
+   *
+   * @returns {boolean} - 両プレイヤーの行動が完了したかどうか
+   */
   allPlayerActionsResolved(): boolean {
     return (
       this.user.gameStatus === 'cannot submit' &&

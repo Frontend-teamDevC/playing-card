@@ -26,7 +26,15 @@ export class SpeedScene extends BaseScene {
   #layoutCardsImages: Image[] = []
   #piledLayoutCardsImages: Image[] = []
 
-  create(data: any) {
+  /**
+   *
+   * create(data: any) : void
+   * SpeedSceneを初期化する関数
+   *
+   * @param {any} data - SpeedTableのインスタンスを含むデータ
+   * @returns {void}
+   */
+  create(data: any): void {
     super.create(data)
 
     this.#userHandsImages = []
@@ -40,6 +48,11 @@ export class SpeedScene extends BaseScene {
     this.renderScene()
   }
 
+  /**
+   * SpeedSceneの描画を行う関数
+   * @param {void}
+   * @returns {void}
+   */
   renderScene() {
     this.dealInitialHandsAndDecks()
     setTimeout(() => {
@@ -70,7 +83,13 @@ export class SpeedScene extends BaseScene {
     }, 10000)
   }
 
-  countDown() {
+  /**
+   * カウントダウンテキストを表示する関数
+   *
+   * @param {void}
+   * @returns {void}
+   */
+  countDown(): void {
     let count = 3
     const countDownText = this.add.text(500, 300, count.toString(), {
       fontSize: '100px',
@@ -95,7 +114,15 @@ export class SpeedScene extends BaseScene {
     }, 1000)
   }
 
-  userDeckText() {
+  /**
+   * userDeckText() : void
+   * ユーザーの山札のテキストを表示する関数
+   *
+   * @param {void}
+   * @returns {void}
+   *
+   */
+  userDeckText(): void {
     this.#userCardsText?.destroy()
 
     const totalCount = this.user!.dividedDeck.length + this.user!.hand.length
@@ -112,7 +139,14 @@ export class SpeedScene extends BaseScene {
     this.#userCardsText = userDeckText
   }
 
-  dealerDeckText() {
+  /**
+   * dealerDeckText() : void
+   * ディーラーの山札のテキストを表示する関数
+   *
+   * @param {void}
+   * @returns {void}
+   */
+  dealerDeckText(): void {
     this.#dealerCardsText?.destroy()
 
     const totalCount =
@@ -130,7 +164,13 @@ export class SpeedScene extends BaseScene {
     this.#dealerCardsText = dealerDeckText
   }
 
-  dealInitialHandsAndDecks() {
+  /**
+   * 両者の初期手札と山札を描画する関数
+   * @param {void}
+   * @returns {void}
+   *
+   */
+  dealInitialHandsAndDecks(): void {
     // dealer's cards
     const dealerDeckImage = this.add.image(300, 150, 'back')
     this.#dealerDeckImage = dealerDeckImage
@@ -229,12 +269,20 @@ export class SpeedScene extends BaseScene {
     }
   }
 
+  /**
+   *
+   * @param player - 手札を出すプレイヤー
+   * @param card - 場札に出すカードの情報
+   * @param cardImage - 場札に出すカードの画像
+   * @param layoutIndex - 場札のインデックス
+   * @returns {void}
+   */
   setLayoutCardImage(
     player: SpeedPlayer,
     card: Card,
     cardImage: Image,
     layoutIndex: number
-  ) {
+  ): void {
     const deckImage =
       player.name === 'Dealer' ? this.#dealerDeckImage : this.#userDeckImage
 
@@ -322,7 +370,14 @@ export class SpeedScene extends BaseScene {
     }, 1000)
   }
 
-  onCardDrag(cardImage: Image, i: number) {
+  /**
+   * プレイヤー側の手札をドラッグ可能にする関数
+   *
+   * @param cardImage - ドラッグ可能にするカードの画像
+   * @param i - カードのインデックス
+   * @returns {void}
+   */
+  onCardDrag(cardImage: Image, i: number): void {
     const prevX = cardImage.x
     const prevY = cardImage.y
 
@@ -391,6 +446,12 @@ export class SpeedScene extends BaseScene {
     })
   }
 
+  /**
+   * ドラッグされたカードが場札に出せるかどうかを判定する関数
+   *
+   * @param cardImage - ドラッグされたカードの画像
+   * @returns {boolean}
+   */
   checkValidMove(cardImage: Image): boolean {
     const layout1 = this.#layoutCardsImages[0]
     const layout2 = this.#layoutCardsImages[1]
@@ -403,6 +464,12 @@ export class SpeedScene extends BaseScene {
     )
   }
 
+  /**
+   * プレイヤーが手札を出せるかどうかを判定する関数
+   *
+   * @param handImages - プレイヤーの手札の画像の配列
+   * @returns {boolean}
+   */
   canSubmit(handImages: Image[]): boolean {
     for (let handImage of handImages) {
       for (let layoutImage of this.#layoutCardsImages) {
@@ -412,7 +479,13 @@ export class SpeedScene extends BaseScene {
     return false
   }
 
-  promptDealer() {
+  /**
+   * ディーラーの行動を決定する関数
+   *
+   * @param {void}
+   * @returns {void}
+   */
+  promptDealer(): void {
     setTimeout(() => {
       if (this.canSubmit(this.#dealerHandImages)) {
         setTimeout(() => {
@@ -463,6 +536,12 @@ export class SpeedScene extends BaseScene {
     }, 3000)
   }
 
+  /**
+   * カードのランクの数値を返す関数
+   *
+   * @param {Image} cardImage - カードの画像
+   * @returns {number}
+   */
   getRank(cardImage: Image): number {
     if (cardImage.texture.key.substring(0, 2) === '10') return 10
 
@@ -480,6 +559,13 @@ export class SpeedScene extends BaseScene {
     }
   }
 
+  /**
+   * 提出されたカードのランクが場札のランクの隣かどうかを判定する関数
+   *
+   * @param {Image} cardImage - カードの画像
+   * @param {Image} layoutImage - 場札の画像
+   * @returns {boolean}
+   */
   rankIsNextToLayout(cardImage: Image, layoutImage: Image): boolean {
     const cardRank = this.getRank(cardImage)
     const layoutRank = this.getRank(layoutImage)
@@ -492,6 +578,13 @@ export class SpeedScene extends BaseScene {
     )
   }
 
+  /**
+   * ドラッグアウトされたカードが場札の上に重なっているかどうかを判定する関数
+   *
+   * @param cardImage - カードの画像
+   * @param layoutImage - 場札の画像
+   * @returns {boolean}
+   */
   isOverlapped(cardImage: Image, layoutImage: Image): boolean {
     const cardBounds = cardImage.getBounds()
     const layoutBounds = layoutImage.getBounds()
@@ -499,13 +592,23 @@ export class SpeedScene extends BaseScene {
     return Phaser.Geom.Intersects.RectangleToRectangle(cardBounds, layoutBounds)
   }
 
+  /**
+   * 指定されたプレイヤー側の手札を場札に出す関数
+   *
+   * @param player - 手札を出すプレイヤー
+   * @param cardImage - 場札に出すカードの画像
+   * @param layoutImage - 場札の画像
+   * @param handIndex - 手札のインデックス
+   * @param layoutIndex - 場札のインデックス
+   * @returns {void}
+   */
   submitCard(
     player: SpeedPlayer | null,
     cardImage?: Image,
     layoutImage?: Image,
     handIndex?: number,
     layoutIndex?: number
-  ) {
+  ): void {
     if (player!.hand.length <= 0) return
 
     if (player!.name === 'Dealer') {
@@ -591,7 +694,14 @@ export class SpeedScene extends BaseScene {
     this.drawCardImageFromDeck(player!, handIndex!)
   }
 
-  drawCardImageFromDeck(player: SpeedPlayer, i: number) {
+  /**
+   * プレイヤーの山札からカードを引いて手札に加える関数
+   *
+   * @param player - 山札からカードを引くプレイヤー
+   * @param i - 手札のインデックス
+   * @returns {void}
+   */
+  drawCardImageFromDeck(player: SpeedPlayer, i: number): void {
     if (player.dividedDeck.length === 0) return
 
     i = i === -1 ? 0 : i
@@ -656,7 +766,13 @@ export class SpeedScene extends BaseScene {
     })
   }
 
-  finalResults() {
+  /**
+   * ゲームの最終結果画面を表示する関数
+   *
+   * @param {void}
+   * @returns {void}
+   */
+  finalResults(): void {
     // destroy previous texts
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#userCardsText?.destroy()
@@ -693,7 +809,12 @@ export class SpeedScene extends BaseScene {
     this.backButton()
   }
 
-  againButton() {
+  /**
+   * もう一度遊ぶボタンを表示する関数
+   * @param {void}
+   * @returns {Button} - もう一度遊ぶボタン
+   * */
+  againButton(): Button {
     return new Button(
       this,
       500,
@@ -711,7 +832,12 @@ export class SpeedScene extends BaseScene {
     )
   }
 
-  backButton() {
+  /**
+   * モード選択画面に戻るボタンを表示する関数
+   * @param {void}
+   * @returns {Button} - モード選択画面に戻るボタン
+   * */
+  backButton(): Button {
     return new Button(
       this,
       500,
@@ -729,5 +855,4 @@ export class SpeedScene extends BaseScene {
       }
     )
   }
-  static createTutorialView() {}
 }
