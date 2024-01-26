@@ -15,6 +15,10 @@ export default class WarTable {
     this.players.push(new Player('DEALER', 'dealer'), this.user)
   }
 
+  /**
+   * 手札を配る関数
+   * @returns {void}
+   */
   public assignHand(): void {
     for (let i = 0; i < this.players.length; i++) {
       for (let j = 0; j < 3; j++) {

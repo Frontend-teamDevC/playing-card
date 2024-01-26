@@ -1,7 +1,7 @@
-import Card from '../model/common/card'
-import Table from '../model/war/warTable'
 import { Controller } from '../controller/controller'
 import { WarController } from '../controller/warController'
+import Card from '../model/common/card'
+import Table from '../model/war/warTable'
 import { BaseScene } from './common/baseScene'
 import { Button } from './common/button'
 
@@ -24,6 +24,10 @@ export class WarView extends BaseScene {
   private dealerCardXtemp: number = 0
   private playerCardXtemp: number = 0
 
+  /**
+   * warSceneを初期化する関数
+   * @param {any} data - warTableを含むデータ
+   */
   public create(data: any): void {
     super.create(data)
     this.table = data.table
@@ -54,6 +58,11 @@ export class WarView extends BaseScene {
     })
   }
 
+  /**
+   * 両プレイヤーにデッキを配る関数
+   *
+   * @returns {void}
+   */
   private assignDeck(): void {
     this.table?.players[0].deck.cards.forEach(() =>
       this.dealerDeck.push(
@@ -72,6 +81,11 @@ export class WarView extends BaseScene {
     })
   }
 
+  /**
+   * 両プレイヤーに手札を配る関数
+   *
+   * @returns {void}
+   */
   private assignHand(): void {
     let dealerHandX = 640
     let dealerHandY = CARD_HEIGHT / 2 + 100
@@ -108,6 +122,11 @@ export class WarView extends BaseScene {
     }
   }
 
+  /**
+   * ゲームを初期化する関数
+   *
+   * @returns {void}
+   */
   private initilizeGame(): void {
     this.assignDeck()
     this.table?.assignHand()
@@ -119,6 +138,11 @@ export class WarView extends BaseScene {
     })
   }
 
+  /**
+   * ディーラーが場に出すカードを選択する関数
+   *
+   * @returns {void}
+   */
   private dealerSelectCard(): void {
     let dealer = this.table!.players[0]
     let handArr = []
@@ -151,6 +175,11 @@ export class WarView extends BaseScene {
     })
   }
 
+  /**
+   * プレイヤーが場に出すカードを選択する関数
+   *
+   * @returns {void}
+   */
   private playerSelectCard(): void {
     let player = this.table!.players[1]
     let n = 0
@@ -215,6 +244,11 @@ export class WarView extends BaseScene {
     })
   }
 
+  /**
+   * 勝負の結果を評価する関数
+   *
+   * @returns {void}
+   */
   private evaluteWar(): void {
     let dealer = this.table!.players[0]
     let player = this.table!.players[1]
@@ -347,6 +381,11 @@ export class WarView extends BaseScene {
     }
   }
 
+  /**
+   * デッキを整理する関数
+   *
+   * @returns {void}
+   */
   organize() {
     let dealer = this.table!.players[0]
     let player = this.table!.players[1]
@@ -410,7 +449,14 @@ export class WarView extends BaseScene {
     }
   }
 
-  flip(target: Phaser.GameObjects.Image, card: Card) {
+  /**
+   * カードを裏返す関数
+   *
+   * @param {Phaser.GameObjects.Image} target - カードの画像
+   * @param {Card} card - カードの情報
+   * @returns {void}
+   */
+  flip(target: Phaser.GameObjects.Image, card: Card): void {
     const timeline = this.add.timeline([
       {
         at: 1000,
@@ -457,7 +503,12 @@ export class WarView extends BaseScene {
     }
   }
 
-  result() {
+  /**
+   * ゲームの最終結果を表示する関数
+   *
+   * @returns {void}
+   */
+  result(): void {
     let dealer = this.table!.players[0]
     let player = this.table!.players[1]
 
