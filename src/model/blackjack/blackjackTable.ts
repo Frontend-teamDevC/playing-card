@@ -37,10 +37,11 @@ export default class BlackjackTable extends Table {
       new BlackjackPlayer(`CPU: ${difficulty}`, 'ai', gameType, aiChips)
     )
   }
-  /*
-  assignPlayerHands(): void
-  ディーラーと全プレイヤーにカードを２枚ずつ配る
-  */
+  /**
+   * プレイヤーに手札を配る関数
+   *
+   * @returns {void}
+   */
   assignPlayerHands(): void {
     for (let player of this.players) {
       player.hand.push(this.deck.drawCard())
@@ -50,10 +51,11 @@ export default class BlackjackTable extends Table {
     this.dealer.hand.push(this.deck.drawCard())
   }
 
-  /*
-  resetRoundInfo(): void
-  終了したラウンドの情報をリセットする
-  */
+  /**
+   * ラウンド終了時に情報をリセットする関数
+   *
+   * @returns {void}
+   */
   resetRoundInfo(): void {
     this.gamePhase = 'betting'
     for (let player of this.players) {
@@ -72,16 +74,19 @@ export default class BlackjackTable extends Table {
     this.roundCount++
   }
 
-  /*
-  evaluateMove(player: Player, userData?: number | BlackjackActionType): void
-  promptPlayer()で取得したプレイヤーの行動に応じてゲームの状態を更新する
-  */
+  /**
+   * プレイヤーの行動に応じた処理を行う関数
+   *
+   * @param {Player} player - プレイヤー
+   * @param {number} userData - 特定のユーザーの情報
+   * @returns {void}
+   */
   evaluateMove(player: Player, userData?: number | BlackjackActionType): void {
     if (player.gameStatus === '') {
       player.gameStatus =
         player.getHandScore() === 21 && player.hand.length === 2
           ? 'blackjack'
-          : player.getHandScore() as number  > 21
+          : (player.getHandScore() as number) > 21
             ? 'bust'
             : 'stand'
       return
@@ -121,7 +126,7 @@ export default class BlackjackTable extends Table {
 
     if (player.type === 'ai') return
 
-    let score = player.getHandScore() as number 
+    let score = player.getHandScore() as number
     if (score === 21) {
       player.gameStatus = player.hand.length === 2 ? 'blackjack' : 'stand'
       return
@@ -131,15 +136,15 @@ export default class BlackjackTable extends Table {
     }
   }
 
-  /*
-  evaluateAndGetRoundResults(): string
-  プレイヤーの行動→ディーラーの行動が全て完了したらラウンドの結果を評価し、結果を返す
-  */
+  /**
+   * ラウンド終了時の勝敗結果を返す関数
+   * @returns {string} - ラウンド終了時の勝敗結果
+   */
   evaluateAndGetRoundResults(): string {
     let dealerScore = this.dealer.getHandScore()
     let result = ''
     for (let player of this.players) {
-      let playerScore = player.getHandScore() as number 
+      let playerScore = player.getHandScore() as number
       if (player.gameStatus === 'surrender') {
         result += `${player.name} surrendered. ${player.bet} chips returned.\n`
       } else if (player.gameStatus === 'blackjack') {
@@ -179,10 +184,11 @@ export default class BlackjackTable extends Table {
     return result
   }
 
-  /*
-  evaluateAndGetFinalResults(): string
-  全ラウンド終了後、チップの数でプレイヤーを順位付けし、結果を返す
-  */
+  /**
+   * ゲームの最終結果を返す関数
+   *
+   * @returns {string} - ゲームの最終結果
+   */
   evaluateAndGetFinalResults(): string {
     // rank players by chips, 1st, 2nd, 3rd
     let sortedPlayers = this.players.sort((a, b) => b.chips - a.chips)
@@ -196,14 +202,21 @@ export default class BlackjackTable extends Table {
     return result
   }
 
-  /*
-  getTurnPlayer(): Player
-  現在のターンが回ってきているプレイヤーを返す
-  */
+  /**
+   * 現在のプレイヤーを返す関数
+   *
+   * @returns {Player} - 現在のターンプレイヤー
+   */
   getTurnPlayer(): Player {
     return this.players[this.turnCounter % this.players.length]
   }
 
+  /**
+   * プレイヤーのターンを進める関数
+   *
+   * @param {number} userData - 特定のユーザーの情報
+   * @returns {void}
+   */
   haveTurn(userData?: number | BlackjackActionType): void {
     if (this.gamePhase === 'dealer turn') {
       if (this.playerActionResolved(this.dealer)) {
@@ -241,18 +254,21 @@ export default class BlackjackTable extends Table {
     this.turnCounter++
   }
 
-  /* 
-  onLastPlayer(): boolean
-  現在のターンが最後のプレイヤーのターンかどうかを返す
-  */
+  /**
+   *　プレイヤーがプレイヤー配列の中で最後の要素かどうかを返す関数
+   *
+   * @returns {boolean} - プレイヤーがプレイヤー配列の中で最後の要素かどうか
+   */
   onLastPlayer(): boolean {
     return this.turnCounter === this.players.length - 1
   }
 
-  /*
-  playerActionResolved(player: Player): boolean
-  ラウンド中のプレイヤーの行動が全て完了しているかどうかを返す
-  */
+  /**
+   * プレイヤーの行動が完了したかどうかを返す関数
+   *
+   * @param {Player} player - プレイヤー
+   * @returns {boolean} - プレイヤーの行動が完了したかどうか
+   */
   playerActionResolved(player: Player): boolean {
     return (
       player.gameStatus === 'double' ||
@@ -263,10 +279,11 @@ export default class BlackjackTable extends Table {
     )
   }
 
-  /*
-  allPlayerActionsResolved(): boolean
-  ラウンド中の全プレイヤーの行動が完了しているかどうかを返す
-  */
+  /**
+   * 全プレイヤーの行動が完了したかどうかを返す関数
+   *
+   * @returns {boolean} - 全プレイヤーの行動が完了したかどうか
+   */
   allPlayerActionsResolved(): boolean {
     for (let player of this.players) {
       if (!this.playerActionResolved(player)) {

@@ -31,7 +31,13 @@ export class BlackjackScene extends BaseScene {
   #playersHandsImages: Image[][] = [[], [], []]
   #dealerHandImages: Image[] = []
 
-  create(data: any) {
+  /**
+   * blackjackSceneを初期化する関数
+   *
+   * @param {any} data - blackjackTableを含むデータ
+   * @returns {void}
+   */
+  create(data: any): void {
     super.create(data)
 
     // reset all the scene
@@ -53,7 +59,12 @@ export class BlackjackScene extends BaseScene {
     this.renderScene()
   }
 
-  renderScene() {
+  /**
+   * blackjackSceneを描画する関数
+   *
+   * @returns {void}
+   */
+  renderScene(): void {
     this.userChipCount()
     this.userBetCount()
 
@@ -96,7 +107,7 @@ export class BlackjackScene extends BaseScene {
         setTimeout(() => {
           if (
             this.dealer!.gameStatus === 'acting' &&
-            this.dealer!.getHandScore() as number < 17
+            (this.dealer!.getHandScore() as number) < 17
           ) {
             this.table!.haveTurn()
 
@@ -154,7 +165,12 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
-  chipButtons() {
+  /**
+   * チップのボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  chipButtons(): void {
     for (let i = 0; i < this.table!.betDenominations.length; i++) {
       const chipButton = new Button(
         this,
@@ -187,7 +203,12 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
-  betButton() {
+  /**
+   * ベットのボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  betButton(): void {
     this.#betButton = new Button(
       this,
       650,
@@ -210,7 +231,12 @@ export class BlackjackScene extends BaseScene {
     )
   }
 
-  clearButton() {
+  /**
+   * かけ金をクリアするボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  clearButton(): void {
     this.#clearButton = new Button(
       this,
       450,
@@ -234,14 +260,24 @@ export class BlackjackScene extends BaseScene {
     )
   }
 
-  actionButtons() {
+  /**
+   * プレイヤーの行動のボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  actionButtons(): void {
     this.hitButton()
     this.standButton()
     this.doubleButton()
     this.surrenderButton()
   }
 
-  hitButton() {
+  /**
+   * ヒットのボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  hitButton(): void {
     const hitButton = new Button(
       this,
       200,
@@ -260,7 +296,12 @@ export class BlackjackScene extends BaseScene {
     this.#actionButtons.push(hitButton)
   }
 
-  standButton() {
+  /**
+   * スタンドのボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  standButton(): void {
     const standButton = new Button(
       this,
       400,
@@ -278,7 +319,12 @@ export class BlackjackScene extends BaseScene {
     this.#actionButtons.push(standButton)
   }
 
-  doubleButton() {
+  /**
+   * ダブルのボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  doubleButton(): void {
     const doubleButton = new Button(
       this,
       600,
@@ -297,7 +343,12 @@ export class BlackjackScene extends BaseScene {
     this.#actionButtons.push(doubleButton)
   }
 
-  surrenderButton() {
+  /**
+   * サレンダーのボタンを作成する関数
+   *
+   * @returns {void}
+   */
+  surrenderButton(): void {
     const surrenderButton = new Button(
       this,
       800,
@@ -315,7 +366,12 @@ export class BlackjackScene extends BaseScene {
     this.#actionButtons.push(surrenderButton)
   }
 
-  playersInfo() {
+  /**
+   * プレイヤーの情報を表示する関数
+   *
+   * @returns {void}
+   */
+  playersInfo(): void {
     // this.#playerNameTexts.forEach((text: Text) => text.destroy())
     // this.#chipTexts.forEach((text: Text) => text.destroy())
     // this.#betTexts.forEach((text: Text) => text.destroy())
@@ -327,7 +383,12 @@ export class BlackjackScene extends BaseScene {
     this.betTexts()
   }
 
-  playerNameTexts() {
+  /**
+   * プレイヤーの名前を表示する関数
+   *
+   * @returns {void}
+   */
+  playerNameTexts(): void {
     // destroy previous texts
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
 
@@ -355,7 +416,12 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
-  userChipCount() {
+  /**
+   * ユーザーのチップの数を表示する関数
+   *
+   * @returns {void}
+   */
+  userChipCount(): void {
     this.#userChipText?.destroy()
 
     const userChipText = this.add.text(5, 30, `Chips: ${this.#userChipCount}`, {
@@ -366,7 +432,12 @@ export class BlackjackScene extends BaseScene {
     this.#userChipText = userChipText
   }
 
-  userBetCount() {
+  /**
+   * ユーザーのベットの数を表示する関数
+   *
+   * @returns {void}
+   */
+  userBetCount(): void {
     this.#userBetText?.destroy()
 
     const userBetText = this.add.text(5, 60, `Bet: ${this.#userBetCount}`, {
@@ -396,7 +467,12 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
-  betTexts() {
+  /**
+   * ベットの数を表示する関数
+   *
+   * @returns {void}
+   */
+  betTexts(): void {
     this.#betTexts.forEach((text: Text) => text.destroy())
 
     for (let i = 0; i < this.table!.players.length; i++) {
@@ -409,7 +485,13 @@ export class BlackjackScene extends BaseScene {
       this.#betTexts.push(betText)
     }
   }
-  playerScoreTexts() {
+
+  /**
+   * スコアを表示する関数
+   *
+   * @returns {void}
+   */
+  playerScoreTexts(): void {
     // destroy previous texts
     this.#scoreTexts.forEach((text: Text) => text.destroy())
 
@@ -440,6 +522,11 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
+  /**
+   * 初期の手札を配る関数
+   *
+   * @returns {void}
+   */
   dealInitialHands() {
     const dealerHands = this.table!.dealer.hand
     for (let i = 0; i < dealerHands.length; i++) {
@@ -522,7 +609,13 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
-  drawCard(player: Player) {
+  /**
+   * カードを引く関数
+   *
+   * @param {Player} player - プレイヤー
+   * @returns {void}
+   */
+  drawCard(player: Player): void {
     const card = player.hand[player.hand.length - 1]
     const cardImage = this.add.image(400, -10, 'back')
     const playerIndex = this.table!.players.indexOf(player)
@@ -572,7 +665,12 @@ export class BlackjackScene extends BaseScene {
     }
   }
 
-  flipDealerCard() {
+  /**
+   * ディーラーのカードを裏返す関数
+   *
+   * @returns {void}
+   */
+  flipDealerCard(): void {
     // ディーラーの裏面になってるカード
     const card = this.dealer!.hand[1]
     const cardImage = this.#dealerHandImages[1]
@@ -598,7 +696,12 @@ export class BlackjackScene extends BaseScene {
     }, 1000)
   }
 
-  roundResults() {
+  /**
+   * ラウンドの結果を表示する関数
+   *
+   * @returns {void}
+   */
+  roundResults(): void {
     // destroy previous texts
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#chipTexts.forEach((text: Text) => text.destroy())
@@ -616,15 +719,15 @@ export class BlackjackScene extends BaseScene {
 
     // if user won, play win sound
     if (
-      this.user!.getHandScore() as number > 21 ||
+      (this.user!.getHandScore() as number) > 21 ||
       (this.dealer!.getHandScore() > this.user!.getHandScore() &&
-        this.dealer!.getHandScore() as number  <= 21) ||
+        (this.dealer!.getHandScore() as number) <= 21) ||
       this.user!.gameStatus === 'surrender'
     ) {
       this.sound.play('lose-se')
     } else if (
       this.user!.getHandScore() > this.dealer!.getHandScore() ||
-      this.dealer!.getHandScore()  as number > 21
+      (this.dealer!.getHandScore() as number) > 21
     ) {
       this.sound.play('win-se')
     }
@@ -638,7 +741,12 @@ export class BlackjackScene extends BaseScene {
     this.nextButton()
   }
 
-  nextButton() {
+  /**
+   * 次のラウンドに進むボタンを作成する関数
+   *
+   * @returns {Button} - 次のラウンドに進むボタン
+   */
+  nextButton(): Button {
     return new Button(
       this,
       500,
@@ -648,21 +756,17 @@ export class BlackjackScene extends BaseScene {
       'select-se',
       () => {
         this.table!.resetRoundInfo()
-        // this.table = new BlackjackTable(
-        //   'blackjack',
-        //   username,
-        //   this.difficulty,
-        //   this.maxRounds
-        // )
-        // this.user = this.table.players[0]
-        // this.dealer = this.table.dealer
         this.create({ table: this.table, difficulty: this.difficulty })
       }
     )
   }
 
-  finalResults() {
-    // destroy previous texts
+  /**
+   * 最終結果を表示する関数
+   *
+   * @returns {void}
+   */
+  finalResults(): void {
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#chipTexts.forEach((text: Text) => text.destroy())
     this.#scoreTexts.forEach((text: Text) => text.destroy())
@@ -696,7 +800,12 @@ export class BlackjackScene extends BaseScene {
     this.backButton()
   }
 
-  gameOver() {
+  /**
+   * ゲームオーバー画面を表示する関数
+   *
+   * @returns {void}
+   */
+  gameOver(): void {
     // destroy previous texts
     this.#playerNameTexts.forEach((text: Text) => text.destroy())
     this.#chipTexts.forEach((text: Text) => text.destroy())
@@ -712,7 +821,6 @@ export class BlackjackScene extends BaseScene {
 
     this.#dealerHandImages.forEach((card: Image) => card.destroy())
 
-    // gameover sound
     this.sound.play('lose-se')
 
     const resultsLog = 'You ran out of chips...'
@@ -726,7 +834,12 @@ export class BlackjackScene extends BaseScene {
     this.backButton()
   }
 
-  againButton() {
+  /**
+   * もう一度プレイするボタンを作成する関数
+   *
+   * @returns {Button} - もう一度プレイするボタン
+   */
+  againButton(): Button {
     return new Button(
       this,
       500,
